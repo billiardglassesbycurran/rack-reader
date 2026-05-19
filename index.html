@@ -1925,40 +1925,9 @@ function showInstallBanner() {
 
   const banner = document.createElement('div');
   banner.id = 'install-banner';
-  banner.style.cssText = `
-    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-    background: var(--rail); border: 1.5px solid var(--gold);
-    border-radius: 12px; padding: 12px 16px;
-    display: flex; align-items: center; gap: 12px;
-    z-index: 999; box-shadow: 0 4px 24px rgba(0,0,0,.7);
-    max-width: 320px; width: 90%;
-    font-family: 'Barlow', sans-serif;
-  `;
-  banner.innerHTML = \`
-    <div style="font-size:28px">🎱</div>
-    <div style="flex:1">
-      <div style="font-weight:700;font-size:13px;color:var(--ivory)">Add to Home Screen</div>
-      <div style="font-size:11px;color:var(--text-dim);margin-top:2px">Use like a real app — no browser needed</div>
-    </div>
-    <button onclick="installApp()" style="background:var(--gold);color:var(--felt);border:none;border-radius:7px;padding:7px 12px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;cursor:pointer;white-space:nowrap">Add</button>
-    <button onclick="dismissInstall()" style="background:none;border:none;color:var(--text-muted);font-size:18px;cursor:pointer;padding:0 4px">✕</button>
-  \`;
+  banner.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--rail);border:1.5px solid var(--gold);border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:12px;z-index:999;box-shadow:0 4px 24px rgba(0,0,0,.7);max-width:320px;width:90%;font-family:Barlow,sans-serif';
+  banner.innerHTML = '<div style="font-size:28px">🎱</div><div style="flex:1"><div style="font-weight:700;font-size:13px;color:var(--ivory)">Add to Home Screen</div><div style="font-size:11px;color:var(--text-dim);margin-top:2px">Use like a real app — no browser needed</div></div><button onclick="installApp()" style="background:var(--gold);color:var(--felt);border:none;border-radius:7px;padding:7px 12px;font-weight:700;font-size:12px;cursor:pointer;white-space:nowrap">Add</button><button onclick="dismissInstall()" style="background:none;border:none;color:var(--text-muted);font-size:18px;cursor:pointer;padding:0 4px">✕</button>';
   document.body.appendChild(banner);
-}
-
-async function installApp() {
-  if (!deferredPrompt) return;
-  deferredPrompt.prompt();
-  const result = await deferredPrompt.userChoice;
-  deferredPrompt = null;
-  const banner = document.getElementById('install-banner');
-  if (banner) banner.remove();
-}
-
-function dismissInstall() {
-  localStorage.setItem('installDismissed', '1');
-  const banner = document.getElementById('install-banner');
-  if (banner) banner.remove();
 }
 
 // iOS Safari specific - show manual instructions
@@ -1968,30 +1937,14 @@ window.addEventListener('load', () => {
   const dismissed = localStorage.getItem('iosDismissed');
   if (isIOS && !isStandalone && !dismissed) {
     setTimeout(() => {
-      const banner = document.createElement('div');
-      banner.id = 'ios-banner';
-      banner.style.cssText = \`
-        position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
-        background:var(--rail);border:1.5px solid var(--gold);
-        border-radius:12px;padding:12px 16px;
-        z-index:999;box-shadow:0 4px 24px rgba(0,0,0,.7);
-        max-width:300px;width:90%;text-align:center;
-        font-family:'Barlow',sans-serif;
-      \`;
-      banner.innerHTML = \`
-        <div style="font-size:24px;margin-bottom:6px">🎱</div>
-        <div style="font-weight:700;font-size:13px;color:var(--ivory);margin-bottom:4px">Add to Home Screen</div>
-        <div style="font-size:11px;color:var(--text-dim);line-height:1.5">Tap <strong style="color:var(--gold)">Share ↑</strong> then <strong style="color:var(--gold)">"Add to Home Screen"</strong></div>
-        <button onclick="document.getElementById('ios-banner').remove();localStorage.setItem('iosDismissed','1')" 
-          style="margin-top:8px;background:none;border:1px solid var(--border);color:var(--text-muted);border-radius:6px;padding:4px 12px;font-size:11px;cursor:pointer">
-          Dismiss
-        </button>
-      \`;
-      document.body.appendChild(banner);
+      const b = document.createElement('div');
+      b.id = 'ios-banner';
+      b.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--rail);border:1.5px solid var(--gold);border-radius:12px;padding:12px 16px;z-index:999;box-shadow:0 4px 24px rgba(0,0,0,.7);max-width:300px;width:90%;text-align:center;font-family:Barlow,sans-serif';
+      b.innerHTML = '<div style="font-size:24px;margin-bottom:6px">🎱</div><div style="font-weight:700;font-size:13px;color:var(--ivory);margin-bottom:4px">Add to Home Screen</div><div style="font-size:11px;color:var(--text-dim);line-height:1.5">Tap <strong style=color:var(--gold)>Share ↑</strong> then <strong style=color:var(--gold)>"Add to Home Screen"</strong></div><button onclick="document.getElementById('ios-banner').remove();localStorage.setItem('iosDismissed','1')" style="margin-top:8px;background:none;border:1px solid var(--border);color:var(--text-muted);border-radius:6px;padding:4px 12px;font-size:11px;cursor:pointer">Dismiss</button>';
+      document.body.appendChild(b);
     }, 4000);
   }
 });
-
 
 /* ═══════════════════════════════════════════
    HELP MODAL
