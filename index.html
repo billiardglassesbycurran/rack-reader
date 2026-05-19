@@ -1041,7 +1041,7 @@ async function loadModel() {
 
   try {
     // Load TF.js first
-    await loadScript('https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.17.0/dist/tf.min.js');
+    await loadScript('https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js');
     await tf.ready();
     setModelStatus('TensorFlow ready — fetching model...', 'loading');
 
