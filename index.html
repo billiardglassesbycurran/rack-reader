@@ -910,8 +910,20 @@ async function loadModel() {
     await tf.ready();
     setModelStatus('TensorFlow ready — fetching model...', 'loading');
 
-    // Load directly — same domain, no CORS needed
-    tfModel = await tf.loadGraphModel(MODEL_URL);
+    // Load with custom fetch to rewrite .bin file URLs to jsDelivr
+    const BASE = 'https://cdn.jsdelivr.net/gh/billiardglassesbycurran/rack-reader@main/';
+    tfModel = await tf.loadGraphModel(MODEL_URL, {
+      fetchFunc: async (url, init) => {
+        // Rewrite relative .bin URLs to jsDelivr absolute URLs
+        if (!url.startsWith('http')) {
+          url = BASE + url;
+        } else if (url.includes('.bin') && !url.includes('jsdelivr')) {
+          const filename = url.split('/').pop();
+          url = BASE + filename;
+        }
+        return fetch(url, init);
+      }
+    });
 
     modelReady = true;
     setModelStatus('✅ Custom model ready — AI detect enabled', 'ready');
