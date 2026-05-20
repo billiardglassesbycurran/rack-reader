@@ -593,11 +593,13 @@ input[type=range] { flex:1; height:4px; accent-color:var(--green-soft); cursor:p
   background: rgba(0,0,0,.75);
   z-index: 100;
   display: none;
-  align-items: flex-end;
-  justify-content: center;
   -webkit-tap-highlight-color: transparent;
 }
-.help-overlay.show { display: flex; }
+.help-overlay.show {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
 
 .help-modal {
   background: var(--felt);
@@ -837,6 +839,17 @@ input[type=range] { flex:1; height:4px; accent-color:var(--green-soft); cursor:p
       </div>
       <div style="font-size:10px;color:var(--text-muted);margin-top:3px;padding-left:80px">
         Low = more detections · High = precise only
+      </div>
+      <div class="div"></div>
+      <div class="autoscan-row">
+        <div>
+          <div class="autoscan-label">🎱 English / Spin Control</div>
+          <div class="autoscan-desc">Tap cue ball to set contact point — affects shot advice</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="english-toggle" onchange="toggleEnglish()">
+          <div class="toggle-track"></div>
+        </label>
       </div>
     </div>
 
