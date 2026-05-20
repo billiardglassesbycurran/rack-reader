@@ -486,6 +486,162 @@ input[type=range] { flex:1; height:4px; accent-color:var(--green-soft); cursor:p
   .geo-badge { font-size: 13px; padding: 4px 12px; }
 }
 
+
+/* ── HELP MODAL ── */
+.help-btn {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: rgba(200,151,46,.15);
+  border: 1.5px solid var(--gold-dim);
+  color: var(--gold);
+  font-family: 'Playfair Display', serif;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .2s;
+  flex-shrink: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+.help-btn:hover { background: rgba(200,151,46,.3); border-color: var(--gold); }
+
+.help-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.75);
+  z-index: 100;
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+  -webkit-tap-highlight-color: transparent;
+}
+.help-overlay.show { display: flex; }
+
+.help-modal {
+  background: var(--felt);
+  border-radius: 20px 20px 0 0;
+  border-top: 2px solid var(--gold-dim);
+  width: 100%;
+  max-width: 600px;
+  max-height: 88vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 0 0 40px;
+  animation: slideUp .3s ease-out;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+.help-handle {
+  width: 40px; height: 4px;
+  background: var(--border-mid);
+  border-radius: 2px;
+  margin: 12px auto 0;
+}
+
+.help-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.help-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--ivory);
+}
+.help-title span { color: var(--gold); }
+
+.help-close {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  font-size: 16px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.help-section {
+  padding: 16px 18px 0;
+}
+
+.help-section-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.help-section-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--gold-dim);
+  opacity: .4;
+}
+
+.help-item {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.help-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+  width: 26px;
+  text-align: center;
+  margin-top: 1px;
+}
+
+.help-item-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: .3px;
+  margin-bottom: 2px;
+}
+
+.help-item-desc {
+  font-size: 12px;
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+
+.help-tip {
+  background: rgba(200,151,46,.08);
+  border: 1px solid var(--gold-dim);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin: 10px 18px 0;
+  font-size: 12px;
+  color: var(--cream);
+  line-height: 1.6;
+}
+
+.help-tip strong { color: var(--gold-bright); }
+
+.help-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 16px 18px 0;
+}
+
 ::-webkit-scrollbar { width:3px; }
 ::-webkit-scrollbar-track { background:transparent; }
 ::-webkit-scrollbar-thumb { background:var(--border-mid); border-radius:2px; }
@@ -497,10 +653,11 @@ input[type=range] { flex:1; height:4px; accent-color:var(--green-soft); cursor:p
   <header class="hdr">
     <div class="hdr-inner">
       <div class="hdr-emblem">🎱</div>
-      <div>
+      <div style="flex:1">
         <div class="hdr-name">Curran's <span>Rack Reader</span></div>
         <div class="hdr-sub">Custom AI · Live Shot Intelligence</div>
       </div>
+      <button class="help-btn" onclick="toggleHelp()" title="Help">?</button>
     </div>
   </header>
 
@@ -586,6 +743,17 @@ input[type=range] { flex:1; height:4px; accent-color:var(--green-soft); cursor:p
           <div class="toggle-track"></div>
         </label>
       </div>
+
+      <div class="div"></div>
+      <div class="sens-row">
+        <div class="sens-label">AI Confidence</div>
+        <input type="range" id="conf-slider" min="10" max="80" value="35"
+          oninput="document.getElementById('conf-val').textContent=this.value+'%';CONF_THRESHOLD=parseInt(this.value)/100">
+        <div class="sens-val" id="conf-val">35%</div>
+      </div>
+      <div style="font-size:10px;color:var(--text-muted);margin-top:3px;padding-left:80px">
+        Low = more detections · High = precise only
+      </div>
     </div>
 
     <!-- CANVAS -->
@@ -613,20 +781,39 @@ input[type=range] { flex:1; height:4px; accent-color:var(--green-soft); cursor:p
     <div class="card">
       <div class="card-label">Manual Mark — select type, tap canvas</div>
       <div class="mark-row">
-        <div class="mark-chip active" data-mode="cue"    onclick="setMode('cue')">
-          <div class="chip-ball" style="background:radial-gradient(circle at 38% 32%,#fff,#d8d0bc)"></div>Cue
+        <div class="mark-chip active" data-mode="cue" onclick="setMode('cue')">
+          <div class="chip-ball" style="background:radial-gradient(circle at 35% 30%,#ffffff,#e8e0cc 50%,#c8b890);border:2px solid rgba(200,190,160,.5)"></div>Cue
         </div>
-        <div class="mark-chip"        data-mode="obj"    onclick="setMode('obj')">
-          <div class="chip-ball" style="background:radial-gradient(circle at 38% 32%,#f06060,#8a1010)"></div>Solid
+        <div class="mark-chip" data-mode="obj" onclick="setMode('obj')">
+          <div class="chip-ball" style="background:radial-gradient(circle at 35% 30%,#f07070,#cc1111 55%,#880000);border:2px solid #aa0000"></div>Solid
         </div>
-        <div class="mark-chip"        data-mode="stripe" onclick="setMode('stripe')">
-          <div class="chip-ball" style="background:radial-gradient(circle at 38% 32%,#f4a261,#a05020)"></div>Stripe
+        <div class="mark-chip" data-mode="stripe" onclick="setMode('stripe')">
+          <!-- Stripe ball: white with colored stripe through middle -->
+          <div class="chip-ball" style="
+            background: linear-gradient(
+              to bottom,
+              #f0e8d8 0%, #f0e8d8 30%,
+              #e07020 30%, #e07020 70%,
+              #f0e8d8 70%, #f0e8d8 100%
+            );
+            border:2px solid #c06010;
+            box-shadow: inset 2px 2px 4px rgba(255,255,255,0.4), inset -2px -2px 4px rgba(0,0,0,0.3);
+          "></div>Stripe
         </div>
-        <div class="mark-chip"        data-mode="eight"  onclick="setMode('eight')">
-          <div class="chip-ball" style="background:radial-gradient(circle at 38% 32%,#444,#0a0a0a)"></div>8-Ball
+        <div class="mark-chip" data-mode="eight" onclick="setMode('eight')">
+          <div class="chip-ball" style="background:radial-gradient(circle at 35% 30%,#444,#111 55%,#000);border:2px solid #444;position:relative">
+            <span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:900;color:#fff;line-height:1">8</span>
+          </div>8-Ball
         </div>
-        <div class="mark-chip"        data-mode="pocket" onclick="setMode('pocket')" style="grid-column:span 4">
-          <div class="chip-ball" style="background:radial-gradient(circle at 38% 32%,#e8c060,#7a5018);border-color:var(--gold-dim)"></div>Target Pocket
+        <div class="mark-chip" data-mode="pocket" onclick="setMode('pocket')" style="grid-column:span 4">
+          <!-- Pocket icon - dark circle like a table pocket -->
+          <div style="
+            width:22px;height:22px;border-radius:50%;
+            background:radial-gradient(circle at 40% 35%, #1a1a1a, #000000);
+            border:2px solid #4a3a20;
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.9), 0 0 8px rgba(200,151,46,0.3);
+            flex-shrink:0;
+          "></div>Target Pocket
         </div>
       </div>
     </div>
@@ -650,13 +837,7 @@ input[type=range] { flex:1; height:4px; accent-color:var(--green-soft); cursor:p
       </div>
     </div>
 
-    <div class="upload-zone" id="upload-zone" onclick="triggerUpload()">
-      <div class="uz-icon">📂</div>
-      <div>
-        <div style="font-weight:600;font-size:12px;color:inherit">Upload a still photo</div>
-        <div style="font-size:11px;color:var(--text-muted);margin-top:1px">JPEG · PNG · HEIC</div>
-      </div>
-    </div>
+
 
   </div>
 </div>
@@ -666,7 +847,7 @@ input[type=range] { flex:1; height:4px; accent-color:var(--green-soft); cursor:p
    CUSTOM MODEL CONFIG
    Your model hosted on Netlify
 ═══════════════════════════════════════════ */
-const MODEL_URL = 'https://lustrous-semolina-b8b6b1.netlify.app/model.json';
+const MODEL_URL = 'https://cdn.jsdelivr.net/gh/billiardglassesbycurran/rack-reader@main/model.json';
 
 // Class definitions from your trained model
 const CLASSES = [
@@ -677,8 +858,8 @@ const CLASSES = [
   { id: 4, name: 'pocket',     label: 'P', color: '#c9a84c', markType: 'pocket' },
 ];
 
-const CONF_THRESHOLD = 0.35;
-const NMS_THRESHOLD  = 0.45;
+let CONF_THRESHOLD = 0.35;
+let NMS_THRESHOLD = 0.45;
 
 /* ═══════════════════════════════════════════
    STATE
@@ -725,7 +906,7 @@ async function loadModel() {
 
   try {
     // Load TF.js first
-    await loadScript('https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.17.0/dist/tf.min.js');
+    await loadScript('https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js');
     await tf.ready();
     setModelStatus('TensorFlow ready — fetching model...', 'loading');
 
@@ -810,7 +991,16 @@ async function runDetection() {
     }
 
     if (detections.length === 0) {
-      setStatus('No balls detected — try better lighting or mark manually', 'warn');
+      const imgData = ctx.getImageData(0, 0, Math.min(canvas.width,100), Math.min(canvas.height,100)).data;
+      let brightness = 0;
+      for (let i = 0; i < imgData.length; i += 4) brightness += imgData[i];
+      brightness = brightness / (imgData.length / 4);
+      let reason = '';
+      if (brightness < 40) reason = 'Image too dark — try better lighting';
+      else if (brightness > 215) reason = 'Image too bright — reduce exposure';
+      else if (canvas.width < 300) reason = 'Image too small — move camera closer';
+      else reason = 'No balls found — try lowering AI Confidence slider, or mark balls manually';
+      setStatus('⚠️ ' + reason, 'warn');
       aiBtn.disabled = false;
       aiBtn.textContent = '🤖 AI Detect';
       return;
@@ -970,6 +1160,7 @@ function playChime(type) {
     console.warn('Chime failed:', e.message);
   }
 }
+
 
 /* ═══════════════════════════════════════════
    CAMERA
@@ -1324,11 +1515,40 @@ function suggestShot() {
     else { advice=buildStraightAdvice(cue,targetBall,pkt,cutAngle,pocketInfo,cueToTarget,allTargets); }
   }
 
-  titl.textContent=title; body.textContent=advice;
+  // ── 3. DIFFICULTY RATING 1-10
+  let difficulty = 5;
+  if (cutAngle !== null) difficulty = Math.round(1 + (cutAngle / 90) * 6);
+  if (cueToTarget !== null) {
+    if (cueToTarget > 0.6) difficulty = Math.min(10, difficulty + 2);
+    else if (cueToTarget < 0.2) difficulty = Math.max(1, difficulty - 1);
+  }
+
+  const diffColor = difficulty <= 3 ? '#34c96a' : difficulty <= 6 ? '#e08820' : '#cc2222';
+  const diffLabel = difficulty <= 3 ? 'Easy' : difficulty <= 5 ? 'Moderate' : difficulty <= 7 ? 'Difficult' : 'Very Difficult';
+
+  // ── 4. SAFETY SUGGESTION for hard shots
+  let safetyNote = '';
+  if (difficulty >= 7) {
+    safetyNote = ' ⚠️ SAFETY PLAY: Difficulty ' + difficulty + '/10 — consider driving your ball to the rail and leaving your opponent no easy shot instead of attempting this.';
+  }
+
+  // Remove old badge if exists
+  const oldBadge = document.getElementById('diff-badge');
+  if (oldBadge) oldBadge.remove();
+
+  // Add difficulty badge
+  const badge = document.createElement('div');
+  badge.id = 'diff-badge';
+  badge.style.cssText = 'display:inline-flex;align-items:center;gap:6px;background:rgba(0,0,0,.3);border:1px solid ' + diffColor + ';border-radius:6px;padding:4px 10px;margin-bottom:8px;font-family:Barlow Condensed,sans-serif;font-size:12px;font-weight:700;color:' + diffColor + ';letter-spacing:1px';
+  badge.textContent = 'DIFFICULTY ' + difficulty + '/10 · ' + diffLabel;
+  document.getElementById('sug-title').after(badge);
+
+  titl.textContent = title;
+  body.textContent = advice + safetyNote;
   sug.classList.add('show');
   playChime('suggestion');
   if (sourceImg) renderCanvas();
-  setStatus('Shot analysis complete','gold');
+  setStatus('Difficulty ' + difficulty + '/10 · ' + diffLabel, 'gold');
 }
 
 function addBadge(parent,text,cls) {
@@ -1415,7 +1635,9 @@ canvas.addEventListener('pointerdown', function(e) {
   marks.push({type:markMode,fx,fy});
   renderCanvas(); hideSuggestion();
   const names={cue:'Cue ball',obj:'Solid ball',eight:'8-ball',stripe:'Stripe ball',pocket:'Target pocket'};
-  setStatus(names[markMode]+' placed — '+marks.length+' mark(s)','gold');
+  const pktCount = marks.filter(m=>m.type==='pocket').length;
+  const pktMsg = pktCount > 0 ? ' · ' + pktCount + ' pocket(s) marked' : '';
+  setStatus(names[markMode]+' placed — '+marks.length+' mark(s)'+pktMsg,'gold');
 });
 
 function setMode(mode) {
@@ -1471,12 +1693,88 @@ document.addEventListener('touchmove', function(e) {
   }
 }, { passive: false });
 
+
+/* ═══════════════════════════════════════════
+   ADD TO HOME SCREEN PROMPT (feature 6)
+═══════════════════════════════════════════ */
+let deferredPrompt = null;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  // Show the banner after 3 seconds
+  setTimeout(showInstallBanner, 3000);
+});
+
+function showInstallBanner() {
+  if (!deferredPrompt) return;
+  if (localStorage.getItem('installDismissed')) return;
+
+  const banner = document.createElement('div');
+  banner.id = 'install-banner';
+  banner.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--rail);border:1.5px solid var(--gold);border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:12px;z-index:999;box-shadow:0 4px 24px rgba(0,0,0,.7);max-width:320px;width:90%;font-family:Barlow,sans-serif';
+  banner.innerHTML = '<div style="font-size:28px">🎱</div><div style="flex:1"><div style="font-weight:700;font-size:13px;color:var(--ivory)">Add to Home Screen</div><div style="font-size:11px;color:var(--text-dim);margin-top:2px">Use like a real app — no browser needed</div></div><button onclick="installApp()" style="background:var(--gold);color:var(--felt);border:none;border-radius:7px;padding:7px 12px;font-weight:700;font-size:12px;cursor:pointer;white-space:nowrap">Add</button><button onclick="dismissInstall()" style="background:none;border:none;color:var(--text-muted);font-size:18px;cursor:pointer;padding:0 4px">✕</button>';
+  document.body.appendChild(banner);
+}
+
+// iOS Safari specific - show manual instructions
+window.addEventListener('load', () => {
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isStandalone = window.navigator.standalone;
+  const dismissed = localStorage.getItem('iosDismissed');
+  if (isIOS && !isStandalone && !dismissed) {
+    setTimeout(() => {
+      const b = document.createElement('div');
+      b.id = 'ios-banner';
+      b.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--rail);border:1.5px solid var(--gold);border-radius:12px;padding:12px 16px;z-index:999;box-shadow:0 4px 24px rgba(0,0,0,.7);max-width:300px;width:90%;text-align:center;font-family:Barlow,sans-serif';
+      b.innerHTML = [
+        '<div style="font-size:24px;margin-bottom:6px">&#127922;</div>',
+        '<div style="font-weight:700;font-size:13px;color:#f0e8d5;margin-bottom:4px">Add to Home Screen</div>',
+        '<div style="font-size:11px;color:#5a8068;line-height:1.5">Tap <strong style="color:#e0ab38">Share</strong> then <strong style="color:#e0ab38">Add to Home Screen</strong></div>',
+        '<button onclick="document.getElementById(String.fromCharCode(105,111,115,45,98,97,110,110,101,114)).remove();localStorage.setItem(String.fromCharCode(105,111,115,68,105,115,109,105,115,115,101,100),String.fromCharCode(49))" style="margin-top:8px;background:none;border:1px solid #234830;color:#3a5545;border-radius:6px;padding:4px 12px;font-size:11px;cursor:pointer">Dismiss</button>'
+      ].join('');
+      document.body.appendChild(b);
+    }, 4000);
+  }
+});
+
+/* ═══════════════════════════════════════════
+   HELP MODAL
+═══════════════════════════════════════════ */
+function toggleHelp() {
+  const overlay = document.getElementById('help-overlay');
+  overlay.classList.toggle('show');
+  if (overlay.classList.contains('show')) {
+    // Scroll modal to top
+    document.getElementById('help-modal').scrollTop = 0;
+    // Prevent body scroll
+    document.body.style.overflow = 'hidden';
+  } else {
+    document.body.style.overflow = '';
+  }
+}
+
+function closeHelpOnOverlay(e) {
+  if (e.target === document.getElementById('help-overlay')) {
+    toggleHelp();
+  }
+}
+
 /* ═══════════════════════════════════════════
    INIT
 ═══════════════════════════════════════════ */
-updateSensitivity();
-updateDelay();
-loadModel(); // Start loading your custom model immediately
+console.log('DEBUG: Starting init...');
+try {
+  updateSensitivity();
+  console.log('DEBUG: updateSensitivity OK');
+  updateDelay();
+  console.log('DEBUG: updateDelay OK');
+  loadModel();
+  console.log('DEBUG: loadModel called');
+} catch(e) {
+  console.error('DEBUG: Init crashed:', e.message, e.stack);
+  document.getElementById('model-msg').textContent = 'Init error: ' + e.message;
+}
 </script>
 </body>
 </html>
