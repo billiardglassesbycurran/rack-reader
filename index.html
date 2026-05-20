@@ -487,6 +487,89 @@ input[type=range] { flex:1; height:4px; accent-color:var(--green-soft); cursor:p
 }
 
 
+
+/* ── ENGLISH / SPIN CONTROL ── */
+.english-panel {
+  display: none;
+  padding-top: 10px;
+}
+.english-panel.show { display: block; }
+
+.english-wrap {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.english-ball-wrap {
+  position: relative;
+  width: 72px; height: 72px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #ffffff, #e0d8c0 50%, #c0b080);
+  border: 2px solid rgba(200,180,100,.4);
+  box-shadow: 0 4px 16px rgba(0,0,0,.5), inset 0 -3px 8px rgba(0,0,0,.3);
+  flex-shrink: 0;
+}
+
+.english-grid {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.english-zone {
+  cursor: pointer;
+  background: transparent;
+  transition: background .15s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.english-zone:hover { background: rgba(255,255,255,.2); }
+.english-zone.active { background: rgba(45,255,138,.45); }
+
+.english-dot {
+  position: absolute;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--green-neon);
+  box-shadow: 0 0 8px var(--green-neon);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  transition: all .2s;
+  top: 50%; left: 50%;
+}
+
+.english-info { flex: 1; }
+
+.english-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 13px; font-weight: 700;
+  color: var(--gold-bright);
+  margin-bottom: 3px;
+}
+
+.english-desc {
+  font-size: 11px;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+
+.english-reset {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 10px; font-weight: 600;
+  color: var(--text-muted);
+  background: none; border: none;
+  cursor: pointer; padding: 0;
+  text-decoration: underline;
+  margin-top: 4px;
+  display: block;
+}
+
 /* ── HELP MODAL ── */
 .help-btn {
   width: 32px; height: 32px;
@@ -815,6 +898,32 @@ input[type=range] { flex:1; height:4px; accent-color:var(--green-soft); cursor:p
             box-shadow: inset 0 2px 6px rgba(0,0,0,0.9), 0 0 8px rgba(200,151,46,0.3);
             flex-shrink:0;
           "></div>Target Pocket
+        </div>
+      </div>
+    </div>
+
+    <!-- ENGLISH PANEL -->
+    <div class="english-panel card" id="english-panel">
+      <div class="card-label">🎱 Cue Ball Contact Point</div>
+      <div class="english-wrap">
+        <div class="english-ball-wrap">
+          <div class="english-grid">
+            <div class="english-zone" data-pos="tl" onclick="setEnglish('tl')"></div>
+            <div class="english-zone" data-pos="t"  onclick="setEnglish('t')"></div>
+            <div class="english-zone" data-pos="tr" onclick="setEnglish('tr')"></div>
+            <div class="english-zone" data-pos="l"  onclick="setEnglish('l')"></div>
+            <div class="english-zone active" data-pos="c" onclick="setEnglish('c')"></div>
+            <div class="english-zone" data-pos="r"  onclick="setEnglish('r')"></div>
+            <div class="english-zone" data-pos="bl" onclick="setEnglish('bl')"></div>
+            <div class="english-zone" data-pos="b"  onclick="setEnglish('b')"></div>
+            <div class="english-zone" data-pos="br" onclick="setEnglish('br')"></div>
+          </div>
+          <div class="english-dot" id="english-dot"></div>
+        </div>
+        <div class="english-info">
+          <div class="english-name" id="english-name">Center Ball</div>
+          <div class="english-desc" id="english-desc">No spin — most accurate. Best for long shots and thin cuts.</div>
+          <button class="english-reset" onclick="setEnglish('c')">Reset to center</button>
         </div>
       </div>
     </div>
@@ -1174,6 +1283,72 @@ function playChime(type) {
   }
 }
 
+
+
+/* ═══════════════════════════════════════════
+   ENGLISH / SPIN CONTROL
+═══════════════════════════════════════════ */
+var currentEnglish = 'c';
+
+var ENGLISH_DATA = {
+  'tl': { name: 'Top-Left (Running)',     dot: ['33%','33%'], desc: 'Running english — cue ball accelerates off the left rail. Extends position reach.' },
+  't':  { name: 'Top Spin (Follow)',       dot: ['50%','18%'], desc: 'Follow shot — cue ball rolls forward after contact. Use to chase position up the table.' },
+  'tr': { name: 'Top-Right (Running)',     dot: ['67%','33%'], desc: 'Running english — cue ball accelerates off the right rail. Extends position reach.' },
+  'l':  { name: 'Left English',            dot: ['18%','50%'], desc: 'Left spin — widens the angle off the left rail. Aim slightly right to compensate for throw.' },
+  'c':  { name: 'Center Ball',             dot: ['50%','50%'], desc: 'No spin — most accurate contact. Best for long shots, thin cuts, and precision.' },
+  'r':  { name: 'Right English',           dot: ['82%','50%'], desc: 'Right spin — widens angle off right rail. Aim slightly left to compensate for throw.' },
+  'bl': { name: 'Bottom-Left (Reverse)',   dot: ['33%','67%'], desc: 'Reverse english — slows and shortens rebound off the left rail. Good for tight position.' },
+  'b':  { name: 'Draw (Backspin)',          dot: ['50%','82%'], desc: 'Draw shot — cue ball pulls back after contact. Use to control position and avoid scratches.' },
+  'br': { name: 'Bottom-Right (Reverse)',  dot: ['67%','67%'], desc: 'Reverse english — slows rebound off right rail. Use when you need a short controlled leave.' }
+};
+
+function toggleEnglish() {
+  var on = document.getElementById('english-toggle').checked;
+  document.getElementById('english-panel').classList.toggle('show', on);
+}
+
+function setEnglish(pos) {
+  currentEnglish = pos;
+  var data = ENGLISH_DATA[pos];
+  var dot = document.getElementById('english-dot');
+  dot.style.left = data.dot[0];
+  dot.style.top  = data.dot[1];
+  document.querySelectorAll('.english-zone').forEach(function(z) {
+    z.classList.toggle('active', z.dataset.pos === pos);
+  });
+  document.getElementById('english-name').textContent = data.name;
+  document.getElementById('english-desc').textContent = data.desc;
+}
+
+function getEnglishAdvice(cutAngle) {
+  var toggle = document.getElementById('english-toggle');
+  if (!toggle || !toggle.checked) return '';
+  var e = currentEnglish;
+  var ca = cutAngle || 0;
+  var advice = '';
+  if (e === 'c') {
+    advice = 'Center ball contact — maximum accuracy for this shot.';
+  } else if (e === 't') {
+    advice = 'Top spin (follow): cue ball rolls forward after contact. ';
+    advice += ca < 30 ? 'Good for running position.' : 'Be careful — cue ball may over-travel on this cut.';
+  } else if (e === 'b') {
+    advice = 'Draw (backspin): cue ball pulls back after contact. ';
+    advice += ca < 30 ? 'Use to bring cue ball back for next shot.' : 'Good for tight position control on this cut.';
+  } else if (e === 'l') {
+    advice = 'Left english: aim slightly RIGHT to compensate for throw. Widens your left rail angle.';
+  } else if (e === 'r') {
+    advice = 'Right english: aim slightly LEFT to compensate for throw. Widens your right rail angle.';
+  } else if (e === 'tl') {
+    advice = 'Running english (top-left): cue ball accelerates off the left rail. Use softer stroke than normal.';
+  } else if (e === 'tr') {
+    advice = 'Running english (top-right): cue ball accelerates off the right rail. Extends position reach.';
+  } else if (e === 'bl') {
+    advice = 'Reverse english (bottom-left): slows cue ball rebound off left rail. Good for short controlled leaves.';
+  } else if (e === 'br') {
+    advice = 'Reverse english (bottom-right): slows rebound off right rail. Use for precise position control.';
+  }
+  return advice ? ' SPIN: ' + advice : '';
+}
 
 /* ═══════════════════════════════════════════
    CAMERA
@@ -1536,6 +1711,10 @@ function suggestShot() {
     else if (cueToTarget < 0.2) difficulty = Math.max(1, difficulty - 1);
   }
 
+  var toggle = document.getElementById('english-toggle');
+  if (toggle && toggle.checked && currentEnglish !== 'c') {
+    difficulty = Math.min(10, difficulty + 1);
+  }
   const diffColor = difficulty <= 3 ? '#34c96a' : difficulty <= 6 ? '#e08820' : '#cc2222';
   const diffLabel = difficulty <= 3 ? 'Easy' : difficulty <= 5 ? 'Moderate' : difficulty <= 7 ? 'Difficult' : 'Very Difficult';
 
@@ -1557,7 +1736,8 @@ function suggestShot() {
   document.getElementById('sug-title').after(badge);
 
   titl.textContent = title;
-  body.textContent = advice + safetyNote;
+  var englishAdvice = getEnglishAdvice(cutAngle);
+  body.textContent = advice + englishAdvice + safetyNote;
   sug.classList.add('show');
   playChime('suggestion');
   if (sourceImg) renderCanvas();
