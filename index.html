@@ -962,7 +962,8 @@ input[type=range] { flex:1; height:4px; accent-color:var(--green-soft); cursor:p
 
 
 
-  </div>
+
+
 </div>
 
 <script>
@@ -1982,5 +1983,121 @@ try {
   document.getElementById('model-msg').textContent = 'Init error: ' + e.message;
 }
 </script>
+<!-- HELP MODAL -->
+  <div class="help-overlay" id="help-overlay" onclick="closeHelpOnOverlay(event)">
+    <div class="help-modal" id="help-modal">
+      <div class="help-handle"></div>
+      <div class="help-header">
+        <div class="help-title">How to Use <span>Rack Reader</span></div>
+        <button class="help-close" onclick="toggleHelp()">✕</button>
+      </div>
+
+      <div class="help-section">
+        <div class="help-section-title">📷 Camera & Scanning</div>
+        <div class="help-item">
+          <div class="help-icon">📷</div>
+          <div><div class="help-item-title">Start Camera</div><div class="help-item-desc">Activates your camera. Point at the pool table from above or at a playing angle.</div></div>
+        </div>
+        <div class="help-item">
+          <div class="help-icon">⚡</div>
+          <div><div class="help-item-title">Auto-Scan</div><div class="help-item-desc">When enabled, captures automatically when balls stop moving. Perfect for tripod use.</div></div>
+        </div>
+        <div class="help-item">
+          <div class="help-icon">🎯</div>
+          <div><div class="help-item-title">Scan Now</div><div class="help-item-desc">Manually captures the current camera frame instantly.</div></div>
+        </div>
+      </div>
+      <div class="help-tip">💡 <strong>Tripod tip:</strong> Mount phone overhead, set sensitivity to 5, still delay to 1.2s. App scans automatically every time balls stop.</div>
+
+      <div class="help-divider"></div>
+
+      <div class="help-section" style="margin-top:16px">
+        <div class="help-section-title">🤖 AI Detection</div>
+        <div class="help-item">
+          <div class="help-icon">🤖</div>
+          <div><div class="help-item-title">AI Detect Button</div><div class="help-item-desc">After capturing a frame, tap to automatically find and mark balls. AI markers show a purple "AI" label.</div></div>
+        </div>
+        <div class="help-item">
+          <div class="help-icon">📊</div>
+          <div><div class="help-item-title">AI Confidence Slider</div><div class="help-item-desc">Low (10-30%) detects more balls. High (60%+) only places very confident markers.</div></div>
+        </div>
+      </div>
+      <div class="help-tip">💡 <strong>Best results:</strong> Shoot from above in good lighting. If AI misses balls, lower the confidence slider or mark manually.</div>
+
+      <div class="help-divider"></div>
+
+      <div class="help-section" style="margin-top:16px">
+        <div class="help-section-title">🎱 Marking Balls</div>
+        <div class="help-item">
+          <div class="help-icon">⚪</div>
+          <div><div class="help-item-title">Cue Ball</div><div class="help-item-desc">Mark the white ball first. The app draws aim lines FROM the cue ball to your target.</div></div>
+        </div>
+        <div class="help-item">
+          <div class="help-icon">🔴</div>
+          <div><div class="help-item-title">Solid & Stripe</div><div class="help-item-desc">Mark your object balls. The app picks the closest one to the cue ball as primary target.</div></div>
+        </div>
+        <div class="help-item">
+          <div class="help-icon">🕳️</div>
+          <div><div class="help-item-title">Target Pocket</div><div class="help-item-desc">Mark where you want to pocket the ball. Unlocks cut angle, aim lines and ghost ball.</div></div>
+        </div>
+        <div class="help-item">
+          <div class="help-icon">↩</div>
+          <div><div class="help-item-title">Undo & Clear</div><div class="help-item-desc">Undo removes last marker. Clear removes all markers. X discards the frame entirely.</div></div>
+        </div>
+      </div>
+      <div class="help-tip">💡 <strong>Workflow:</strong> Mark Cue Ball → Target Ball → Target Pocket → Suggest Best Shot.</div>
+
+      <div class="help-divider"></div>
+
+      <div class="help-section" style="margin-top:16px">
+        <div class="help-section-title">🎱 English / Spin Control</div>
+        <div class="help-item">
+          <div class="help-icon">🔛</div>
+          <div><div class="help-item-title">Enable in Settings</div><div class="help-item-desc">Turn on the English/Spin toggle in Auto-Scan Settings. An interactive cue ball diagram appears.</div></div>
+        </div>
+        <div class="help-item">
+          <div class="help-icon">👆</div>
+          <div><div class="help-item-title">Tap the Cue Ball</div><div class="help-item-desc">Top = follow. Bottom = draw/backspin. Left/Right = side english. Corners = running or reverse english.</div></div>
+        </div>
+      </div>
+
+      <div class="help-divider"></div>
+
+      <div class="help-section" style="margin-top:16px">
+        <div class="help-section-title">🔍 Shot Suggestions</div>
+        <div class="help-item">
+          <div class="help-icon">📐</div>
+          <div><div class="help-item-title">Cut Angle</div><div class="help-item-desc">0° = straight in (easiest). 90° = maximum cut (hardest). Color coded green/amber/red.</div></div>
+        </div>
+        <div class="help-item">
+          <div class="help-icon">🎯</div>
+          <div><div class="help-item-title">Difficulty Rating</div><div class="help-item-desc">1-10 score combining cut angle, distance and spin. 1-3 Easy · 4-6 Moderate · 7-10 Difficult.</div></div>
+        </div>
+        <div class="help-item">
+          <div class="help-icon">🛡️</div>
+          <div><div class="help-item-title">Safety Suggestion</div><div class="help-item-desc">When difficulty hits 7+, the app automatically suggests a defensive safety play.</div></div>
+        </div>
+        <div class="help-item">
+          <div class="help-icon">🎮</div>
+          <div><div class="help-item-title">Game Modes</div><div class="help-item-desc">8-Ball targets your group. 9-Ball always hits lowest ball first. Straight Pool focuses on cluster control.</div></div>
+        </div>
+      </div>
+      <div class="help-tip">💡 <strong>Pro tip:</strong> Always mark the Target Pocket for the most accurate advice.</div>
+
+      <div class="help-divider"></div>
+
+      <div class="help-section" style="margin-top:16px">
+        <div class="help-section-title">🔔 Sound Chimes</div>
+        <div class="help-item">
+          <div class="help-icon">🔔</div>
+          <div><div class="help-item-title">Two-Chime System</div><div class="help-item-desc">Soft click = table scanned. Louder two-tone = suggestion ready. Designed for tripod use so you hear when to look up.</div></div>
+        </div>
+      </div>
+      <div style="height:20px"></div>
+    </div>
+  </div>
+
+  </div>
+
 </body>
 </html>
