@@ -1340,28 +1340,36 @@ function getEnglishAdvice(cutAngle) {
   var e = currentEnglish;
   var ca = cutAngle || 0;
   var advice = '';
+
   if (e === 'c') {
-    advice = 'Center ball contact — maximum accuracy for this shot.';
+    if (ca < 15) advice = 'Center ball — straight shot. Cue ball continues forward along the shot line.';
+    else if (ca < 45) advice = 'Center ball (stun): cue ball deflects ~' + Math.round(90-ca) + '° from shot line. See the white path line on canvas.';
+    else advice = 'Center ball on a hard cut — cue ball deflects sharply. Watch the path line for position.';
   } else if (e === 't') {
-    advice = 'Top spin (follow): cue ball rolls forward after contact. ';
-    advice += ca < 30 ? 'Good for running position.' : 'Be careful — cue ball may over-travel on this cut.';
+    if (ca < 20) advice = 'Follow shot: cue ball chases the object ball forward. Great for running position.';
+    else if (ca < 50) advice = 'Follow on a ' + Math.round(ca) + '° cut — reduces deflection angle. Cue ball travels more forward than stun.';
+    else advice = 'Follow on steep cut — be careful, cue ball may travel far. Consider draw instead.';
   } else if (e === 'b') {
-    advice = 'Draw (backspin): cue ball pulls back after contact. ';
-    advice += ca < 30 ? 'Use to bring cue ball back for next shot.' : 'Good for tight position control on this cut.';
+    if (ca < 20) advice = 'Draw shot: cue ball reverses back toward you. Perfect for avoiding scratches on straight shots.';
+    else if (ca < 50) advice = 'Draw on ' + Math.round(ca) + '° cut — increases deflection. Cue ball pulls back and wide. Good for shape.';
+    else advice = 'Draw on steep cut — cue ball kicks back sharply. Aim slightly fuller to compensate for reduced cut efficiency.';
   } else if (e === 'l') {
-    advice = 'Left english: aim slightly RIGHT to compensate for throw. Widens your left rail angle.';
+    var throwAdj = Math.round(ca * 0.05 * 10) / 10;
+    advice = 'Left english throws object ball RIGHT by ~' + throwAdj + '°. Aim ' + throwAdj + '° left to compensate. Widens left rail rebound.';
   } else if (e === 'r') {
-    advice = 'Right english: aim slightly LEFT to compensate for throw. Widens your right rail angle.';
+    var throwAdj = Math.round(ca * 0.05 * 10) / 10;
+    advice = 'Right english throws object ball LEFT by ~' + throwAdj + '°. Aim ' + throwAdj + '° right to compensate. Widens right rail rebound.';
   } else if (e === 'tl') {
-    advice = 'Running english (top-left): cue ball accelerates off the left rail. Use softer stroke than normal.';
+    advice = 'Running english (top-left): cue ball accelerates off left rail. Use 10-15% softer stroke — ball travels further than expected.';
   } else if (e === 'tr') {
-    advice = 'Running english (top-right): cue ball accelerates off the right rail. Extends position reach.';
+    advice = 'Running english (top-right): cue ball accelerates off right rail. Use 10-15% softer stroke for position control.';
   } else if (e === 'bl') {
-    advice = 'Reverse english (bottom-left): slows cue ball rebound off left rail. Good for short controlled leaves.';
+    advice = 'Reverse english (bottom-left): cue ball slows and shortens left rail rebound by ~30%. Good for tight position near left rail.';
   } else if (e === 'br') {
-    advice = 'Reverse english (bottom-right): slows rebound off right rail. Use for precise position control.';
+    advice = 'Reverse english (bottom-right): cue ball slows and shortens right rail rebound by ~30%. Good for precise short leaves.';
   }
-  return advice ? ' SPIN: ' + advice : '';
+
+  return advice ? ' SPIN PHYSICS: ' + advice : '';
 }
 
 /* ═══════════════════════════════════════════
@@ -1589,6 +1597,118 @@ function renderCanvas() {
       ctx.strokeStyle='rgba(240,232,213,0.5)'; ctx.lineWidth=1.5;
       ctx.setLineDash([3,3]); ctx.stroke(); ctx.restore();
     });
+  }
+
+
+  // ── CUE BALL PATH AFTER CONTACT (Spin Physics) ──
+  if (cue && objs.length > 0 && pkt) {
+    const englishToggle = document.getElementById('english-toggle');
+    const spinOn = englishToggle && englishToggle.checked;
+    const spin = spinOn ? currentEnglish : 'c';
+
+    const cx = cue.fx*W, cy = cue.fy*H;
+    const ox = objs[0].fx*W, oy = objs[0].fy*H;
+    const px = pkt.fx*W, py = pkt.fy*H;
+
+    // Shot direction vector (cue to object)
+    const shotDx = ox - cx, shotDy = oy - cy;
+    const shotLen = Math.hypot(shotDx, shotDy);
+    const shotNx = shotDx/shotLen, shotNy = shotDy/shotLen;
+
+    // Cut angle in radians
+    const outDx = px - ox, outDy = py - oy;
+    const outLen = Math.hypot(outDx, outDy);
+    const outNx = outDx/outLen, outNy = outDy/outLen;
+    const dotProd = Math.max(-1, Math.min(1, shotNx*outNx + shotNy*outNy));
+    const cutRad = Math.acos(dotProd);
+    const cutDeg = cutRad * 180 / Math.PI;
+
+    // Natural deflection angle (90° - cut angle for stun)
+    // Cross product to determine left/right deflection
+    const cross = shotNx * outNy - shotNy * outNx;
+    const deflSign = cross > 0 ? 1 : -1;
+
+    // Base deflection angle from shot line (perpendicular for stun)
+    let deflAngle = Math.PI/2 * deflSign;
+
+    // Adjust deflection based on spin
+    if (spin === 't') {
+      // Follow: cue ball continues more forward, less deflection
+      deflAngle = deflSign * (Math.PI/2 - cutRad * 0.6);
+    } else if (spin === 'b') {
+      // Draw: cue ball reverses back toward shooter
+      deflAngle = deflSign * (Math.PI/2 + cutRad * 0.8);
+    } else if (spin === 'tl') {
+      deflAngle = deflSign * (Math.PI/2 - cutRad * 0.5) - 0.3;
+    } else if (spin === 'tr') {
+      deflAngle = deflSign * (Math.PI/2 - cutRad * 0.5) + 0.3;
+    } else if (spin === 'bl') {
+      deflAngle = deflSign * (Math.PI/2 + cutRad * 0.6) - 0.3;
+    } else if (spin === 'br') {
+      deflAngle = deflSign * (Math.PI/2 + cutRad * 0.6) + 0.3;
+    } else if (spin === 'l') {
+      deflAngle = deflSign * Math.PI/2 - 0.25;
+    } else if (spin === 'r') {
+      deflAngle = deflSign * Math.PI/2 + 0.25;
+    }
+
+    // Calculate cue ball direction after contact
+    const shotAngle = Math.atan2(shotDy, shotDx);
+    const cueBallAngle = shotAngle + deflAngle;
+
+    // Draw cue ball path line
+    const pathLen = Math.min(W, H) * 0.45;
+    const endX = ox + Math.cos(cueBallAngle) * pathLen;
+    const endY = oy + Math.sin(cueBallAngle) * pathLen;
+
+    // Color based on spin type
+    const spinColors = {
+      'c': 'rgba(240,232,213,0.7)',
+      't': 'rgba(52,201,106,0.8)',
+      'b': 'rgba(100,149,255,0.8)',
+      'l': 'rgba(255,200,50,0.8)',
+      'r': 'rgba(255,200,50,0.8)',
+      'tl': 'rgba(52,201,106,0.7)',
+      'tr': 'rgba(52,201,106,0.7)',
+      'bl': 'rgba(100,149,255,0.7)',
+      'br': 'rgba(100,149,255,0.7)',
+    };
+    const pathColor = spinColors[spin] || 'rgba(240,232,213,0.7)';
+
+    // Draw the cue ball path
+    ctx.save();
+    ctx.setLineDash([6, 4]);
+    ctx.strokeStyle = pathColor;
+    ctx.lineWidth = 2.5;
+    ctx.shadowColor = pathColor;
+    ctx.shadowBlur = 8;
+    ctx.beginPath();
+    ctx.moveTo(ox, oy);
+    ctx.lineTo(endX, endY);
+    ctx.stroke();
+
+    // Draw arrowhead at end
+    const arrowSize = R * 0.9;
+    const arrowAngle1 = cueBallAngle + Math.PI * 0.8;
+    const arrowAngle2 = cueBallAngle - Math.PI * 0.8;
+    ctx.setLineDash([]);
+    ctx.beginPath();
+    ctx.moveTo(endX, endY);
+    ctx.lineTo(endX + Math.cos(arrowAngle1)*arrowSize, endY + Math.sin(arrowAngle1)*arrowSize);
+    ctx.moveTo(endX, endY);
+    ctx.lineTo(endX + Math.cos(arrowAngle2)*arrowSize, endY + Math.sin(arrowAngle2)*arrowSize);
+    ctx.stroke();
+
+    // Draw destination circle (where cue ball ends up approximately)
+    ctx.setLineDash([3, 3]);
+    ctx.strokeStyle = pathColor.replace('0.7', '0.4').replace('0.8', '0.4');
+    ctx.lineWidth = 1.5;
+    ctx.shadowBlur = 0;
+    ctx.beginPath();
+    ctx.arc(endX, endY, R * 1.1, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.restore();
   }
 
   marks.forEach(m => {
