@@ -1368,28 +1368,50 @@ function drawEnglishBall(pos) {
   c.stroke();
   c.setLineDash([]);
 
-  // Zone positions map
+  // Zone positions - exactly where dot should appear on the ball
+  // Ball center is 36,36 — radius 34
+  // Top = near top of ball, Bottom = near bottom, etc.
   var positions = {
-    'tl':[18,18], 't':[36,18], 'tr':[54,18],
-    'l':[18,36],  'c':[36,36], 'r':[54,36],
-    'bl':[18,54], 'b':[36,54], 'br':[54,54]
+    'tl':[20,20], 't':[36,14], 'tr':[52,20],
+    'l':[14,36],  'c':[36,36], 'r':[58,36],
+    'bl':[20,52], 'b':[36,58], 'br':[52,52]
   };
 
-  // Draw active zone highlight
-  var activePos = positions[pos];
+  var activePos = positions[pos] || [36,36];
+
+  // Draw glow ring behind dot
   c.beginPath();
-  c.arc(activePos[0], activePos[1], 9, 0, Math.PI*2);
-  c.fillStyle = 'rgba(45,255,138,0.5)';
+  c.arc(activePos[0], activePos[1], 10, 0, Math.PI*2);
+  c.fillStyle = 'rgba(45,255,138,0.25)';
   c.fill();
 
   // Draw green dot
   c.beginPath();
-  c.arc(activePos[0], activePos[1], 5, 0, Math.PI*2);
+  c.arc(activePos[0], activePos[1], 6, 0, Math.PI*2);
   c.fillStyle = '#2dff8a';
   c.shadowColor = '#2dff8a';
-  c.shadowBlur = 8;
+  c.shadowBlur = 12;
   c.fill();
   c.shadowBlur = 0;
+
+  // Draw small label
+  c.font = 'bold 8px sans-serif';
+  c.fillStyle = 'rgba(0,0,0,0.5)';
+  c.textAlign = 'center';
+  c.textBaseline = 'middle';
+  var labels = {
+    'tl':'TL','t':'TOP','tr':'TR',
+    'l':'L','c':'CTR','r':'R',
+    'bl':'BL','b':'BOT','br':'BR'
+  };
+  // Draw label slightly offset from dot
+  var labelOffsets = {
+    'tl':[0,10],'t':[0,12],'tr':[0,10],
+    'l':[12,0],'c':[0,12],'r':[-12,0],
+    'bl':[0,-10],'b':[0,-12],'br':[0,-10]
+  };
+  var off = labelOffsets[pos] || [0,12];
+  c.fillText(labels[pos]||'', activePos[0]+off[0], activePos[1]+off[1]);
 }
 
 function handleEnglishClick(event) {
