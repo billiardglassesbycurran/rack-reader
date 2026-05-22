@@ -1419,29 +1419,14 @@ function handleEnglishClick(event) {
   var rect = cv.getBoundingClientRect();
   var x = (event.clientX - rect.left) * (72 / rect.width);
   var y = (event.clientY - rect.top) * (72 / rect.height);
-  var col = x < 24 ? 'l' : x < 48 ? 'c' : 'r';
-  var row = y < 24 ? 't' : y < 48 ? '' : 'b';
-  var pos = row === '' ? col : (col === 'c' ? row : row + col.replace('c',''));
-  // Fix corner naming
-  var posMap = {
-    'tl':'tl','tc':'t','tr':'tr',
-    'l':'l','c':'c','r':'r',
-    'bl':'bl','bc':'b','br':'br'
-  };
-  var mapped = {
-    'tl':'tl','t':'t','tr':'tr',
-    'l':'l','c':'c','r':'r',
-    'bl':'bl','b':'b','br':'br'
-  };
-  // Recalculate cleanly
-  var col2 = x < 24 ? 0 : x < 48 ? 1 : 2;
-  var row2 = y < 24 ? 0 : y < 48 ? 1 : 2;
+  var col = x < 24 ? 0 : x < 48 ? 1 : 2;
+  var row = y < 24 ? 0 : y < 48 ? 1 : 2;
   var grid = [
     ['tl','t','tr'],
     ['l','c','r'],
     ['bl','b','br']
   ];
-  setEnglish(grid[row2][col2]);
+  setEnglish(grid[row][col]);
 }
 
 function getEnglishAdvice(cutAngle) {
