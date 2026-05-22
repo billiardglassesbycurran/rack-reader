@@ -1949,15 +1949,17 @@ window.addEventListener('load', () => {
    HELP MODAL
 ═══════════════════════════════════════════ */
 function toggleHelp() {
-  const overlay = document.getElementById('help-overlay');
-  overlay.classList.toggle('show');
-  if (overlay.classList.contains('show')) {
-    // Scroll modal to top
-    document.getElementById('help-modal').scrollTop = 0;
-    // Prevent body scroll
-    document.body.style.overflow = 'hidden';
-  } else {
+  var el = document.getElementById('help-overlay');
+  if (!el) { alert('Help not found'); return; }
+  if (el.style.display === 'flex') {
+    el.style.display = 'none';
     document.body.style.overflow = '';
+  } else {
+    el.style.display = 'flex';
+    el.style.alignItems = 'flex-end';
+    el.style.justifyContent = 'center';
+    document.body.style.overflow = 'hidden';
+    document.getElementById('help-modal').scrollTop = 0;
   }
 }
 
