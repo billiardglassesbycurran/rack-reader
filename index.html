@@ -520,6 +520,7 @@ input[type=range] { flex:1; height:4px; accent-color:var(--green-soft); cursor:p
   grid-template-rows: 1fr 1fr 1fr;
   border-radius: 50%;
   overflow: hidden;
+  z-index: 2;
 }
 
 .english-zone {
@@ -534,14 +535,15 @@ input[type=range] { flex:1; height:4px; accent-color:var(--green-soft); cursor:p
 
 .english-dot {
   position: absolute;
-  width: 10px; height: 10px;
+  width: 12px; height: 12px;
   border-radius: 50%;
   background: var(--green-neon);
-  box-shadow: 0 0 8px var(--green-neon);
+  box-shadow: 0 0 10px var(--green-neon), 0 0 20px rgba(45,255,138,.5);
   transform: translate(-50%, -50%);
   pointer-events: none;
-  transition: all .2s;
+  transition: left .2s, top .2s;
   top: 50%; left: 50%;
+  z-index: 3;
 }
 
 .english-info { flex: 1; }
@@ -1319,19 +1321,105 @@ var ENGLISH_DATA = {
 function toggleEnglish() {
   var on = document.getElementById('english-toggle').checked;
   document.getElementById('english-panel').classList.toggle('show', on);
+  if (on) {
+    // Small delay to ensure panel is visible before drawing
+    setTimeout(function() { drawEnglishBall(currentEnglish); }, 50);
+  }
 }
 
 function setEnglish(pos) {
   currentEnglish = pos;
   var data = ENGLISH_DATA[pos];
-  var dot = document.getElementById('english-dot');
-  dot.style.left = data.dot[0];
-  dot.style.top  = data.dot[1];
-  document.querySelectorAll('.english-zone').forEach(function(z) {
-    z.classList.toggle('active', z.dataset.pos === pos);
-  });
   document.getElementById('english-name').textContent = data.name;
   document.getElementById('english-desc').textContent = data.desc;
+  drawEnglishBall(pos);
+  if (sourceImg) renderCanvas();
+}
+
+function drawEnglishBall(pos) {
+  var cv = document.getElementById('english-canvas');
+  if (!cv) return;
+  var c = cv.getContext('2d');
+  var size = 72;
+  c.clearRect(0, 0, size, size);
+
+  // Draw ball background
+  var grad = c.createRadialGradient(25, 22, 3, 36, 36, 36);
+  grad.addColorStop(0, '#ffffff');
+  grad.addColorStop(0.5, '#e0d8c0');
+  grad.addColorStop(1, '#c0b080');
+  c.beginPath();
+  c.arc(36, 36, 34, 0, Math.PI*2);
+  c.fillStyle = grad;
+  c.fill();
+  c.strokeStyle = 'rgba(200,180,100,.5)';
+  c.lineWidth = 1.5;
+  c.stroke();
+
+  // Draw 3x3 grid lines (subtle)
+  c.strokeStyle = 'rgba(0,0,0,0.08)';
+  c.lineWidth = 1;
+  c.setLineDash([2,2]);
+  c.beginPath();
+  c.moveTo(24, 2); c.lineTo(24, 70);
+  c.moveTo(48, 2); c.lineTo(48, 70);
+  c.moveTo(2, 24); c.lineTo(70, 24);
+  c.moveTo(2, 48); c.lineTo(70, 48);
+  c.stroke();
+  c.setLineDash([]);
+
+  // Zone positions map
+  var positions = {
+    'tl':[18,18], 't':[36,18], 'tr':[54,18],
+    'l':[18,36],  'c':[36,36], 'r':[54,36],
+    'bl':[18,54], 'b':[36,54], 'br':[54,54]
+  };
+
+  // Draw active zone highlight
+  var activePos = positions[pos];
+  c.beginPath();
+  c.arc(activePos[0], activePos[1], 9, 0, Math.PI*2);
+  c.fillStyle = 'rgba(45,255,138,0.5)';
+  c.fill();
+
+  // Draw green dot
+  c.beginPath();
+  c.arc(activePos[0], activePos[1], 5, 0, Math.PI*2);
+  c.fillStyle = '#2dff8a';
+  c.shadowColor = '#2dff8a';
+  c.shadowBlur = 8;
+  c.fill();
+  c.shadowBlur = 0;
+}
+
+function handleEnglishClick(event) {
+  var cv = document.getElementById('english-canvas');
+  var rect = cv.getBoundingClientRect();
+  var x = (event.clientX - rect.left) * (72 / rect.width);
+  var y = (event.clientY - rect.top) * (72 / rect.height);
+  var col = x < 24 ? 'l' : x < 48 ? 'c' : 'r';
+  var row = y < 24 ? 't' : y < 48 ? '' : 'b';
+  var pos = row === '' ? col : (col === 'c' ? row : row + col.replace('c',''));
+  // Fix corner naming
+  var posMap = {
+    'tl':'tl','tc':'t','tr':'tr',
+    'l':'l','c':'c','r':'r',
+    'bl':'bl','bc':'b','br':'br'
+  };
+  var mapped = {
+    'tl':'tl','t':'t','tr':'tr',
+    'l':'l','c':'c','r':'r',
+    'bl':'bl','b':'b','br':'br'
+  };
+  // Recalculate cleanly
+  var col2 = x < 24 ? 0 : x < 48 ? 1 : 2;
+  var row2 = y < 24 ? 0 : y < 48 ? 1 : 2;
+  var grid = [
+    ['tl','t','tr'],
+    ['l','c','r'],
+    ['bl','b','br']
+  ];
+  setEnglish(grid[row2][col2]);
 }
 
 function getEnglishAdvice(cutAngle) {
