@@ -733,7 +733,47 @@ input[type=range] { flex:1; height:4px; accent-color:var(--green-soft); cursor:p
 ::-webkit-scrollbar-track { background:transparent; }
 ::-webkit-scrollbar-thumb { background:var(--border-mid); border-radius:2px; }
 
-/* ── SHOT HISTORY ── */
+/* ── VIEW MODE SELECTOR ── */
+.view-mode-bar {
+  display: flex;
+  gap: 0;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  padding: 3px;
+  margin-bottom: 10px;
+}
+.view-mode-pill {
+  flex: 1;
+  text-align: center;
+  padding: 7px 6px;
+  border-radius: calc(var(--r-sm) - 2px);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 12px; font-weight: 700;
+  letter-spacing: .8px; text-transform: uppercase;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background .18s, color .18s;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+.view-mode-pill.active {
+  background: var(--gold);
+  color: #1a1200;
+}
+.view-mode-pill .vmp-icon { font-size: 14px; display: block; margin-bottom: 1px; }
+.view-mode-pill .vmp-label { font-size: 10px; letter-spacing: 1px; }
+
+.view-mode-hint {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-align: center;
+  margin-bottom: 8px;
+  font-family: 'Barlow Condensed', sans-serif;
+  letter-spacing: .3px;
+  min-height: 16px;
+  transition: opacity .2s;
+}
 .history-item {
   display: flex; align-items: center; gap: 10px;
   padding: 8px 10px; border-radius: var(--r-sm);
@@ -1025,7 +1065,7 @@ input[type=range] { flex:1; height:4px; accent-color:var(--green-soft); cursor:p
                  box-shadow:0 0 0 2px rgba(200,151,46,0.4);transition:box-shadow .2s"
           title="Tap to change spin"></div>
         <label class="toggle" style="flex-shrink:0">
-          <input type="checkbox" id="english-toggle" onchange="toggleEnglish()">
+          <input type="checkbox" id="english-toggle" onchange="toggleEnglish(true)">
           <div class="toggle-track"></div>
         </label>
       </div>
@@ -1061,6 +1101,22 @@ input[type=range] { flex:1; height:4px; accent-color:var(--green-soft); cursor:p
         <button onclick="clearHistory()" style="background:none;border:none;color:var(--text-muted);font-size:10px;font-family:'Barlow Condensed',sans-serif;cursor:pointer;letter-spacing:.5px">CLEAR</button>
       </div>
       <div id="history-list" style="display:flex;flex-direction:column;gap:6px"></div>
+    </div>
+
+    <!-- VIEW MODE -->
+    <div class="card" id="view-mode-card">
+      <div class="card-label">📐 Perspective Mode</div>
+      <div class="view-mode-bar">
+        <div class="view-mode-pill active" id="vmp-player" onclick="setViewMode('player')">
+          <span class="vmp-icon">🎮</span>
+          <span class="vmp-label">Player View</span>
+        </div>
+        <div class="view-mode-pill" id="vmp-overhead" onclick="setViewMode('overhead')">
+          <span class="vmp-icon">🛸</span>
+          <span class="vmp-label">Overhead View</span>
+        </div>
+      </div>
+      <div class="view-mode-hint" id="view-mode-hint">Natural playing angle · geometry is advisory</div>
     </div>
 
     <!-- MARK BALLS -->
@@ -1179,6 +1235,7 @@ let sourceImg     = null;
 let marks         = [];
 let markMode      = 'cue';
 let gameMode      = '8ball';
+let viewMode      = 'player'; // 'player' | 'overhead'
 let autoScan      = true;
 let tfModel       = null;
 let modelReady    = false;
@@ -1350,7 +1407,17 @@ async function runDetection() {
     document.getElementById('detections-box').classList.toggle('show', added > 0);
     if (added > 0) document.getElementById('redetect-btn').style.display = 'block';
     renderCanvas();
-    setStatus(`🤖 AI placed ${added} marker(s) — review and adjust if needed`, 'live');
+    setStatus(`🤖 AI placed ${added} marker(s) — review and tap Suggest Best Shot`, 'live');
+
+    // Auto-suggest if we have enough info
+    const hasCue = marks.some(m => m.type === 'cue');
+    const hasTarget = marks.some(m => m.type === 'obj' || m.type === 'stripe' || m.type === 'eight');
+    if (hasCue && hasTarget) {
+      setTimeout(() => {
+        setStatus('🤖 AI detected balls — auto-calculating best shot…', 'gold');
+        suggestShot();
+      }, 600);
+    }
 
   } catch (err) {
     setStatus('Detection error — try again', 'err');
@@ -1502,7 +1569,7 @@ var ENGLISH_DATA = {
   'br': { name: 'Bottom-Right (Reverse)',  dot: ['67%','67%'], desc: 'Reverse english — slows rebound off right rail. Use when you need a short controlled leave.' }
 };
 
-function toggleEnglish() {
+function toggleEnglish(fromUser) {
   var on = document.getElementById('english-toggle').checked;
   var panel = document.getElementById('english-panel');
   var settingsBall = document.getElementById('settings-spin-ball');
@@ -1510,7 +1577,8 @@ function toggleEnglish() {
     panel.style.display = '';
     if (settingsBall) settingsBall.style.display = 'block';
     drawEnglishSVG(currentEnglish);
-    setTimeout(openSpinPopup, 150);
+    // Only open popup on real user tap, not programmatic restore
+    if (fromUser) setTimeout(openSpinPopup, 150);
   } else {
     panel.style.display = 'none';
     if (settingsBall) settingsBall.style.display = 'none';
@@ -1650,6 +1718,9 @@ function getEnglishAdvice(cutAngle) {
   } else if (e === 'r') {
     var throwAdj = Math.round(ca * 0.05 * 10) / 10;
     advice = 'Right english throws object ball LEFT by ~' + throwAdj + '°. Aim ' + throwAdj + '° right to compensate. Widens right rail rebound.';
+  } else if (e === 'stun') {
+    if (ca < 20) advice = 'Stun shot: cue ball stops dead on contact. Zero deflection — stays exactly where it hits. Best for straight and near-straight shots.';
+    else advice = 'Stun on a cut — cue ball deflects at roughly 90° from the shot line. Hit firmly just below center for maximum stop effect.';
   } else if (e === 'tl') {
     advice = 'Running english (top-left): cue ball accelerates off left rail. Use 10-15% softer stroke — ball travels further than expected.';
   } else if (e === 'tr') {
@@ -1790,6 +1861,9 @@ function captureFrame(mode) {
     hideSuggestion();
     document.getElementById('detections-box').classList.remove('show');
     document.getElementById('redetect-btn').style.display = 'none';
+    // Pause auto-scan so it doesn't keep re-firing while user marks balls
+    stillCounter = 0;
+    lastScanTime = Date.now() + 8000; // 8s cooldown after capture
     // Show english panel if toggle is on
     if (document.getElementById('english-toggle').checked) {
       document.getElementById('english-panel').style.display = '';
@@ -1797,8 +1871,8 @@ function captureFrame(mode) {
     // Auto-scroll to canvas
     setTimeout(() => document.getElementById('canvas-card').scrollIntoView({behavior:'smooth', block:'start'}), 120);
     playChime('scan');
-    const label = mode === 'auto' ? '⚡ Auto-scan triggered' : '📸 Manual scan';
-    setStatus(label + (modelReady ? ' — tap AI Detect for auto ball detection' : ' — mark balls manually'), 'gold');
+    const label = mode === 'auto' ? '⚡ Frame captured' : '📸 Frame captured';
+    setStatus(label + (modelReady ? ' — running AI detection…' : ' — mark balls manually'), 'gold');
     if (modelReady && autoScan) setTimeout(() => runDetection(), 300);
   };
   img.src = tmp.toDataURL('image/jpeg', 0.92);
@@ -2126,7 +2200,12 @@ function suggestShot() {
 
   if (pocketInfo) addBadge(geo,pocketInfo.label,'pocket-type');
   if (cutAngle!==null) {
-    addBadge(geo,`Cut: ${cutAngle}°`,'angle');
+    if (viewMode === 'overhead') {
+      addBadge(geo,`Cut: ${cutAngle}°`,'angle');
+    } else {
+      const approxLabel = cutAngle<15?'Straight':cutAngle<35?'Moderate cut':cutAngle<55?'Hard cut':'Extreme cut';
+      addBadge(geo, approxLabel, 'angle');
+    }
     const diff=cutAngle<25?'Easy':cutAngle<50?'Medium':cutAngle<70?'Hard':'Very Hard';
     const cls=cutAngle<25?'easy':cutAngle<50?'medium':'';
     addBadge(geo,diff,'diff'+(cls?' '+cls:''));
@@ -2218,6 +2297,16 @@ function addBadge(parent,text,cls) {
 
 function buildGeometryLine(cutAngle,pocketInfo) {
   if (cutAngle===null) return '';
+
+  if (viewMode === 'player') {
+    // Perspective-distorted — advisory language only, no degree claims
+    if (cutAngle<15) return 'Looks like a straight or near-straight shot from this angle — aim at the center of the ball. ';
+    if (cutAngle<35) return 'Looks like a moderate cut from this angle — aim off-center toward the pocket side. '+(pocketInfo?.corner?'Corner pocket gives you room. ':'Side pocket — be precise. ');
+    if (cutAngle<55) return 'Looks like a significant cut from this angle — aim toward the far edge of the object ball. '+(pocketInfo?.corner?'Corner pocket helps. ':'Side pocket — thin hit needed. ');
+    return 'Looks like a hard cut from this angle — very thin contact required. Seriously consider a safety. ';
+  }
+
+  // Overhead — precise degrees
   if (cutAngle<8)  return 'Dead straight — hit the center of the ball and let it run. Don\'t overthink it. ';
   if (cutAngle<20) return `Slight cut at ${cutAngle}° — aim just a hair off center toward the pocket side. Very makeable. `;
   if (cutAngle<35) {
@@ -2343,6 +2432,21 @@ function setGame(mode,el) {
   saveSettings();
 }
 
+function setViewMode(mode) {
+  viewMode = mode;
+  document.getElementById('vmp-player').classList.toggle('active', mode === 'player');
+  document.getElementById('vmp-overhead').classList.toggle('active', mode === 'overhead');
+  const hint = document.getElementById('view-mode-hint');
+  if (mode === 'player') {
+    hint.textContent = 'Natural playing angle · geometry is advisory';
+  } else {
+    hint.textContent = 'Phone held above table · precise geometry & cut angles';
+  }
+  hideSuggestion();
+  if (sourceImg) renderCanvas();
+  saveSettings();
+}
+
 function undoMark() {
   if (!marks.length) return;
   marks.pop(); if (sourceImg) renderCanvas(); hideSuggestion();
@@ -2361,6 +2465,7 @@ function discardFrame() {
   canvas.style.display='none'; placeholder.style.display='';
   document.getElementById('detections-box').classList.remove('show');
   hideSuggestion(); setStatus('Frame discarded — scan again or upload','');
+  lastScanTime = 0; stillCounter = 0; // resume auto-scan
 }
 
 function hideSuggestion() { document.getElementById('suggestion').classList.remove('show'); }
@@ -2429,6 +2534,22 @@ window.addEventListener('load', () => {
     }, 4000);
   }
 });
+
+function installApp() {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(() => {
+    deferredPrompt = null;
+    const b = document.getElementById('install-banner');
+    if (b) b.remove();
+  });
+}
+
+function dismissInstall() {
+  localStorage.setItem('installDismissed', '1');
+  const b = document.getElementById('install-banner');
+  if (b) b.remove();
+}
 
 /* ═══════════════════════════════════════════
    HELP MODAL
@@ -2595,12 +2716,11 @@ function selectSpinZone(posId) {
   // We'll add 'stun' as a real entry mapped to a slightly-below-center hit
   if (posId === 'stun') {
     currentEnglish = 'stun';
-    // stun uses same physics as center but with a distinct label
     updateSpinPopupInfo('stun');
     buildSpinSVG('stun');
-    // Sync main english panel
     document.getElementById('english-name').textContent = 'Stun Shot';
     document.getElementById('english-desc').textContent = 'Cue ball stops dead on contact (or near-stop). Hit just below center with a firm stroke.';
+    drawEnglishSVG('stun');
     if (sourceImg) renderCanvas();
     return;
   }
@@ -2652,6 +2772,7 @@ function saveSettings() {
       english:   document.getElementById('english-toggle').checked,
       coaching:  document.getElementById('coaching-toggle').checked,
       gameMode:  gameMode,
+      viewMode:  viewMode,
       spin:      currentEnglish
     }));
   } catch(e) {}
@@ -2678,6 +2799,7 @@ function loadSettings() {
       gameMode = s.gameMode;
       document.querySelectorAll('.pill').forEach(p => p.classList.toggle('active', p.textContent.toLowerCase().replace('-','').includes(s.gameMode.replace('ball',''))));
     }
+    if (s.viewMode) { viewMode = s.viewMode; setViewMode(s.viewMode); }
     if (s.spin) { currentEnglish = s.spin; }
   } catch(e) {}
 }
@@ -2749,6 +2871,11 @@ function clearHistory() {
 ═══════════════════════════════════════════ */
 function buildCoachingText(cutAngle, difficulty, cueToTarget, spin) {
   var lines = [];
+
+  // Player view disclaimer
+  if (viewMode === 'player') {
+    lines.push('<strong>Player View mode:</strong> Angles shown are approximate — perspective distortion affects accuracy. Switch to Overhead View with phone held above the table for precise geometry.');
+  }
 
   if (cutAngle !== null) {
     if (cutAngle < 10) lines.push('<strong>Straight shot:</strong> Aim directly at the center of the object ball. The cue ball will follow through along the shot line.');
