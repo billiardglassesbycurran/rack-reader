@@ -1344,20 +1344,35 @@ async function runDetection() {
   try {
     let detections = [];
 
+    // Always run inference on a clean 640x640 offscreen canvas
+    // This prevents size/format issues with uploaded photos
+    const inferCanvas = document.createElement('canvas');
+    inferCanvas.width = 640; inferCanvas.height = 640;
+    const inferCtx = inferCanvas.getContext('2d');
+    inferCtx.drawImage(canvas, 0, 0, 640, 640);
+
     if (tfModel.detect) {
       // COCO-SSD style
-      const preds = await tfModel.detect(canvas);
+      const preds = await tfModel.detect(inferCanvas);
       const ballPreds = preds.filter(p =>
         ['sports ball','frisbee','orange','apple'].includes(p.class) && p.score > CONF_THRESHOLD
       );
+      // Scale bbox back to original canvas size
+      const scaleX = canvas.width / 640, scaleY = canvas.height / 640;
       detections = ballPreds.map(p => ({
-        class: 1, // solid as default
+        class: 1,
         score: p.score,
-        bbox: p.bbox
+        bbox: [p.bbox[0]*scaleX, p.bbox[1]*scaleY, p.bbox[2]*scaleX, p.bbox[3]*scaleY]
       }));
     } else {
-      // Custom YOLOv8 TF.js model
-      detections = await runYOLOInference(canvas);
+      // Custom YOLOv8 TF.js model — pass the 640x640 canvas
+      const rawDets = await runYOLOInference(inferCanvas);
+      // Scale bbox back to original canvas size
+      const scaleX = canvas.width / 640, scaleY = canvas.height / 640;
+      detections = rawDets.map(d => ({
+        ...d,
+        bbox: [d.bbox[0]*scaleX, d.bbox[1]*scaleY, d.bbox[2]*scaleX, d.bbox[3]*scaleY]
+      }));
     }
 
     if (detections.length === 0) {
@@ -1369,7 +1384,7 @@ async function runDetection() {
       if (brightness < 40) reason = 'Image too dark — try better lighting';
       else if (brightness > 215) reason = 'Image too bright — reduce exposure';
       else if (canvas.width < 300) reason = 'Image too small — move camera closer';
-      else reason = 'No balls found — try lowering AI Confidence slider, or mark balls manually';
+      else reason = 'No balls detected — try lowering AI Confidence or mark balls manually';
       setStatus('⚠️ ' + reason, 'warn');
       aiBtn.disabled = false;
       aiBtn.textContent = '🤖 AI Detect';
@@ -1396,7 +1411,6 @@ async function runDetection() {
       const cls = CLASSES[det.class] || CLASSES[1];
       marks.push({ type: cls.markType, fx, fy, aiDetected: true, className: cls.name });
 
-      // Add chip to detections box
       const chip = document.createElement('div');
       chip.className = 'det-chip';
       chip.textContent = `${cls.name} ${Math.round(det.score * 100)}%`;
@@ -1420,8 +1434,16 @@ async function runDetection() {
     }
 
   } catch (err) {
-    setStatus('Detection error — try again', 'err');
-    console.error(err);
+    console.error('Detection error:', err);
+    // Give a more helpful message based on error type
+    const msg = err.message || '';
+    if (msg.includes('memory') || msg.includes('tensor')) {
+      setStatus('⚠️ AI memory error — try Re-detect or mark balls manually', 'err');
+    } else if (msg.includes('network') || msg.includes('fetch')) {
+      setStatus('⚠️ Model not loaded — check connection and reload', 'err');
+    } else {
+      setStatus('⚠️ Detection failed — mark balls manually or try again', 'err');
+    }
   }
 
   aiBtn.disabled = false;
