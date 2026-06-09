@@ -732,6 +732,166 @@ input[type=range] { flex:1; height:4px; accent-color:var(--green-soft); cursor:p
 ::-webkit-scrollbar { width:3px; }
 ::-webkit-scrollbar-track { background:transparent; }
 ::-webkit-scrollbar-thumb { background:var(--border-mid); border-radius:2px; }
+
+/* ── SHOT HISTORY ── */
+.history-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 10px; border-radius: var(--r-sm);
+  background: var(--surface2); border: 1px solid var(--border);
+  cursor: pointer; transition: border-color .15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.history-item:hover { border-color: var(--gold-dim); }
+.history-thumb {
+  width: 52px; height: 38px; border-radius: 5px;
+  object-fit: cover; flex-shrink: 0;
+  border: 1px solid var(--border-mid);
+}
+.history-info { flex: 1; min-width: 0; }
+.history-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 12px; font-weight: 700; color: var(--text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.history-meta {
+  font-size: 10px; color: var(--text-muted);
+  font-family: 'Barlow Condensed', sans-serif;
+  letter-spacing: .5px; margin-top: 2px;
+}
+.history-diff {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px; font-weight: 700; flex-shrink: 0;
+}
+
+/* ── COACHING MODE ── */
+.coaching-box {
+  display: none;
+  background: rgba(200,151,46,.06);
+  border: 1px solid var(--gold-dim);
+  border-radius: var(--r-sm);
+  padding: 10px 12px;
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--cream);
+  line-height: 1.7;
+}
+.coaching-box.show { display: block; }
+.coaching-box strong { color: var(--gold-bright); }
+
+/* ── CUE BALL SPIN POPUP ── */
+.spin-popup-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.72);
+  z-index: 200;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  -webkit-tap-highlight-color: transparent;
+}
+.spin-popup-overlay.show { display: flex; }
+
+.spin-popup {
+  background: var(--felt);
+  border: 1.5px solid var(--gold-dim);
+  border-radius: 18px;
+  padding: 16px 16px 20px;
+  width: 320px;
+  max-width: 94vw;
+  box-shadow: 0 8px 48px rgba(0,0,0,.85), 0 0 0 1px rgba(200,151,46,.12);
+  animation: popIn .22s cubic-bezier(.34,1.56,.64,1);
+  position: relative;
+}
+
+@keyframes popIn {
+  from { transform: scale(.82); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+.spin-popup-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 2.5px; text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+  text-align: center;
+}
+
+.spin-popup-close {
+  position: absolute; top: 12px; right: 12px;
+  width: 26px; height: 26px; border-radius: 50%;
+  background: var(--surface2); border: 1px solid var(--border);
+  color: var(--text-dim); font-size: 13px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+
+.spin-ball-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.spin-svg-wrap {
+  position: relative;
+  width: 220px; height: 220px;
+  flex-shrink: 0;
+}
+
+.spin-svg-wrap svg {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.spin-zone {
+  cursor: pointer;
+  transition: opacity .12s;
+}
+.spin-zone:hover { opacity: .85; }
+
+.spin-info-panel {
+  width: 100%;
+  text-align: center;
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
+}
+
+.spin-info-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 17px; font-weight: 700; letter-spacing: .3px;
+  color: var(--gold-bright);
+  margin-bottom: 5px;
+}
+
+.spin-info-desc {
+  font-size: 12px;
+  color: var(--text-dim);
+  line-height: 1.6;
+  max-width: 260px;
+  margin: 0 auto;
+}
+
+.spin-reset-btn {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 10px; font-weight: 600;
+  color: var(--text-muted);
+  background: none; border: none;
+  cursor: pointer; padding: 0;
+  text-decoration: underline;
+  margin-top: 6px;
+  display: block;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.spin-cue-hint {
+  text-align: center;
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-top: 12px;
+  font-family: 'Barlow Condensed', sans-serif;
+  letter-spacing: .5px;
+}
 </style>
 </head>
 <body>
@@ -742,7 +902,7 @@ input[type=range] { flex:1; height:4px; accent-color:var(--green-soft); cursor:p
       <div class="hdr-emblem">🎱</div>
       <div style="flex:1">
         <div class="hdr-name">Curran's <span>Rack Reader</span></div>
-        <div class="hdr-sub">Custom AI · Live Shot Intelligence</div>
+        <div class="hdr-sub">Custom AI · Live Shot Intelligence <span style="color:var(--gold-dim);opacity:.7">· v5</span></div>
       </div>
       <button class="help-btn" onclick="toggleHelp()" title="Help">?</button>
     </div>
@@ -816,9 +976,9 @@ input[type=range] { flex:1; height:4px; accent-color:var(--green-soft); cursor:p
       </div>
       <div class="sens-row">
         <div class="sens-label">Still delay</div>
-        <input type="range" id="delay-slider" min="5" max="30" value="12"
+        <input type="range" id="delay-slider" min="5" max="150" value="15"
           oninput="document.getElementById('delay-val').textContent=(this.value/10).toFixed(1)+'s';updateDelay()">
-        <div class="sens-val" id="delay-val">1.2s</div>
+        <div class="sens-val" id="delay-val">1.5s</div>
       </div>
       <div class="div"></div>
       <div class="autoscan-row">
@@ -841,6 +1001,17 @@ input[type=range] { flex:1; height:4px; accent-color:var(--green-soft); cursor:p
       </div>
       <div style="font-size:10px;color:var(--text-muted);margin-top:3px;padding-left:80px">
         Low = more detections · High = precise only
+      </div>
+      <div class="div"></div>
+      <div class="autoscan-row">
+        <div>
+          <div class="autoscan-label">&#127979; Coaching Mode</div>
+          <div class="autoscan-desc">Explains why a shot has that difficulty rating</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="coaching-toggle">
+          <div class="toggle-track"></div>
+        </label>
       </div>
       <div class="div"></div>
       <div class="autoscan-row">
@@ -874,6 +1045,16 @@ input[type=range] { flex:1; height:4px; accent-color:var(--green-soft); cursor:p
     <div class="detections-box" id="detections-box">
       <div class="det-title">🤖 AI Detected</div>
       <div class="det-list" id="det-list"></div>
+      <button id="redetect-btn" class="btn btn-ai" onclick="reDetect()" style="margin-top:8px;width:100%;display:none">🔄 Re-detect</button>
+    </div>
+
+    <!-- SHOT HISTORY -->
+    <div class="card" id="history-panel" style="display:none">
+      <div class="card-label" style="display:flex;align-items:center;justify-content:space-between">
+        <span>&#128248; Shot History</span>
+        <button onclick="clearHistory()" style="background:none;border:none;color:var(--text-muted);font-size:10px;font-family:'Barlow Condensed',sans-serif;cursor:pointer;letter-spacing:.5px">CLEAR</button>
+      </div>
+      <div id="history-list" style="display:flex;flex-direction:column;gap:6px"></div>
     </div>
 
     <!-- MARK BALLS -->
@@ -918,27 +1099,14 @@ input[type=range] { flex:1; height:4px; accent-color:var(--green-soft); cursor:p
     </div>
 
     <!-- ENGLISH PANEL -->
-    <div class="english-panel card" id="english-panel">
-      <div class="card-label">🎱 Cue Ball Contact Point</div>
+    <div class="english-panel card" id="english-panel" style="display:none">
+      <div class="card-label">&#127506; Cue Ball Contact Point</div>
       <div class="english-wrap">
-        <div class="english-ball-wrap">
-          <div class="english-grid">
-            <div class="english-zone" data-pos="tl" onclick="setEnglish('tl')"></div>
-            <div class="english-zone" data-pos="t"  onclick="setEnglish('t')"></div>
-            <div class="english-zone" data-pos="tr" onclick="setEnglish('tr')"></div>
-            <div class="english-zone" data-pos="l"  onclick="setEnglish('l')"></div>
-            <div class="english-zone active" data-pos="c" onclick="setEnglish('c')"></div>
-            <div class="english-zone" data-pos="r"  onclick="setEnglish('r')"></div>
-            <div class="english-zone" data-pos="bl" onclick="setEnglish('bl')"></div>
-            <div class="english-zone" data-pos="b"  onclick="setEnglish('b')"></div>
-            <div class="english-zone" data-pos="br" onclick="setEnglish('br')"></div>
-          </div>
-          <div class="english-dot" id="english-dot"></div>
-        </div>
+        <div id="english-svg-wrap" onclick="openSpinPopup()" style="width:88px;height:88px;flex-shrink:0;cursor:pointer;border-radius:50%;transition:box-shadow .2s;box-shadow:0 0 0 2px rgba(200,151,46,0.3);" title="Tap to set spin"></div>
         <div class="english-info">
           <div class="english-name" id="english-name">Center Ball</div>
           <div class="english-desc" id="english-desc">No spin — most accurate. Best for long shots and thin cuts.</div>
-          <button class="english-reset" onclick="setEnglish('c')">Reset to center</button>
+          <button class="english-reset" onclick="openSpinPopup()">Tap to change spin &#8250;</button>
         </div>
       </div>
     </div>
@@ -959,6 +1127,7 @@ input[type=range] { flex:1; height:4px; accent-color:var(--green-soft); cursor:p
         <div class="geo-badges" id="geo-badges"></div>
         <div class="sug-title"  id="sug-title"></div>
         <div class="sug-body"   id="sug-body"></div>
+        <div class="coaching-box" id="coaching-box"></div>
       </div>
     </div>
 
@@ -1173,6 +1342,7 @@ async function runDetection() {
     });
 
     document.getElementById('detections-box').classList.toggle('show', added > 0);
+    if (added > 0) document.getElementById('redetect-btn').style.display = 'block';
     renderCanvas();
     setStatus(`🤖 AI placed ${added} marker(s) — review and adjust if needed`, 'live');
 
@@ -1183,6 +1353,14 @@ async function runDetection() {
 
   aiBtn.disabled = false;
   aiBtn.textContent = '🤖 AI Detect';
+}
+
+function reDetect() {
+  marks = marks.filter(m => !m.aiDetected);
+  document.getElementById('detections-box').classList.remove('show');
+  document.getElementById('redetect-btn').style.display = 'none';
+  renderCanvas();
+  runDetection();
 }
 
 async function runYOLOInference(canvasEl) {
@@ -1320,10 +1498,15 @@ var ENGLISH_DATA = {
 
 function toggleEnglish() {
   var on = document.getElementById('english-toggle').checked;
-  document.getElementById('english-panel').classList.toggle('show', on);
+  var panel = document.getElementById('english-panel');
   if (on) {
-    // Small delay to ensure panel is visible before drawing
-    setTimeout(function() { drawEnglishBall(currentEnglish); }, 50);
+    // Always show the panel when toggled on
+    panel.style.display = '';
+    drawEnglishSVG(currentEnglish);
+    // Open the popup so user can set spin immediately
+    setTimeout(openSpinPopup, 150);
+  } else {
+    panel.style.display = 'none';
   }
 }
 
@@ -1337,96 +1520,97 @@ function setEnglish(pos) {
 }
 
 function drawEnglishBall(pos) {
-  var cv = document.getElementById('english-canvas');
-  if (!cv) return;
-  var c = cv.getContext('2d');
-  var size = 72;
-  c.clearRect(0, 0, size, size);
+  // Legacy canvas function — now replaced by SVG. Draw mini SVG into english-svg-wrap instead.
+  drawEnglishSVG(pos);
+}
 
-  // Draw ball background
-  var grad = c.createRadialGradient(25, 22, 3, 36, 36, 36);
-  grad.addColorStop(0, '#ffffff');
-  grad.addColorStop(0.5, '#e0d8c0');
-  grad.addColorStop(1, '#c0b080');
-  c.beginPath();
-  c.arc(36, 36, 34, 0, Math.PI*2);
-  c.fillStyle = grad;
-  c.fill();
-  c.strokeStyle = 'rgba(200,180,100,.5)';
-  c.lineWidth = 1.5;
-  c.stroke();
+function drawEnglishSVG(pos) {
+  var wrap = document.getElementById('english-svg-wrap');
+  if (!wrap) return;
+  // Mini 72px version — same ball, smaller, no labels
+  var S = 72, CX = 36, CY = 36, R = 33;
+  var activeId = pos;
+  if (pos === 'tl' || pos === 'tr') activeId = 't';
+  if (pos === 'bl' || pos === 'br') activeId = 'b';
 
-  // Draw 3x3 grid lines (subtle)
-  c.strokeStyle = 'rgba(0,0,0,0.08)';
-  c.lineWidth = 1;
-  c.setLineDash([2,2]);
-  c.beginPath();
-  c.moveTo(24, 2); c.lineTo(24, 70);
-  c.moveTo(48, 2); c.lineTo(48, 70);
-  c.moveTo(2, 24); c.lineTo(70, 24);
-  c.moveTo(2, 48); c.lineTo(70, 48);
-  c.stroke();
-  c.setLineDash([]);
+  // Mini zones scaled to 72px viewBox
+  var zones = [
+    { id:'t',    x:30, y:5,  w:12, h:22, rx:6,  dot:[36,14], shape:'rect' },
+    { id:'stun', x:30, y:38, w:12, h:14, rx:6,  dot:[36,44], shape:'rect' },
+    { id:'b',    x:30, y:54, w:12, h:18, rx:6,  dot:[36,61], shape:'rect' },
+    { id:'l',    x:5,  y:30, w:22, h:12, rx:6,  dot:[14,36], shape:'rect' },
+    { id:'r',    x:45, y:30, w:22, h:12, rx:6,  dot:[58,36], shape:'rect' },
+    { id:'c',    cx:36, cy:36, cr:9,             dot:[36,36], shape:'circle' }
+  ];
 
-  // Zone positions - exactly where dot should appear on the ball
-  // Ball center is 36,36 — radius 34
-  // Top = near top of ball, Bottom = near bottom, etc.
-  var positions = {
-    'tl':[20,20], 't':[36,14], 'tr':[52,20],
-    'l':[14,36],  'c':[36,36], 'r':[58,36],
-    'bl':[20,52], 'b':[36,58], 'br':[52,52]
+  var zoneColors = {
+    't':    ['rgba(52,201,106,0.5)','rgba(52,201,106,0.9)'],
+    'stun': ['rgba(224,136,32,0.5)','rgba(224,136,32,0.9)'],
+    'b':    ['rgba(100,149,255,0.5)','rgba(100,149,255,0.9)'],
+    'l':    ['rgba(255,200,50,0.5)','rgba(255,200,50,0.9)'],
+    'r':    ['rgba(255,200,50,0.5)','rgba(255,200,50,0.9)'],
+    'c':    ['rgba(240,232,213,0.35)','rgba(240,232,213,0.85)']
   };
 
-  var activePos = positions[pos] || [36,36];
+  var svg = '<svg viewBox="0 0 72 72" xmlns="http://www.w3.org/2000/svg">' +
+    '<defs>' +
+    '<radialGradient id="mg_ball" cx="35%" cy="30%" r="70%">' +
+    '<stop offset="0%" stop-color="#ffffff"/>' +
+    '<stop offset="35%" stop-color="#f0e8d5"/>' +
+    '<stop offset="70%" stop-color="#d8c890"/>' +
+    '<stop offset="100%" stop-color="#a88840"/>' +
+    '</radialGradient>' +
+    '<clipPath id="mg_clip"><circle cx="36" cy="36" r="32"/></clipPath>' +
+    '<filter id="mg_glow" x="-80%" y="-80%" width="260%" height="260%">' +
+    '<feGaussianBlur stdDeviation="2" result="b"/>' +
+    '<feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>' +
+    '</filter>' +
+    '</defs>';
 
-  // Draw glow ring behind dot
-  c.beginPath();
-  c.arc(activePos[0], activePos[1], 10, 0, Math.PI*2);
-  c.fillStyle = 'rgba(45,255,138,0.25)';
-  c.fill();
+  svg += '<circle cx="36" cy="36" r="33" fill="url(#mg_ball)"/>';
+  // Curved dividers
+  svg += '<g clip-path="url(#mg_clip)" fill="none" stroke="rgba(160,140,90,0.35)" stroke-width="0.8">' +
+         '<ellipse cx="36" cy="36" rx="12" ry="32"/>' +
+         '<ellipse cx="36" cy="36" rx="32" ry="12"/>' +
+         '</g>';
 
-  // Draw green dot
-  c.beginPath();
-  c.arc(activePos[0], activePos[1], 6, 0, Math.PI*2);
-  c.fillStyle = '#2dff8a';
-  c.shadowColor = '#2dff8a';
-  c.shadowBlur = 12;
-  c.fill();
-  c.shadowBlur = 0;
+  // Zones
+  svg += '<g clip-path="url(#mg_clip)">';
+  zones.forEach(function(z) {
+    var isActive = (z.id === activeId);
+    var cols = zoneColors[z.id] || zoneColors['c'];
+    var fill   = isActive ? cols[0] : 'rgba(50,50,45,0.5)';
+    var stroke = isActive ? cols[1] : 'rgba(110,100,70,0.55)';
+    var sw = isActive ? '1.5' : '0.8';
+    if (z.shape === 'circle') {
+      svg += '<circle cx="' + z.cx + '" cy="' + z.cy + '" r="' + z.cr + '" fill="' + fill + '" stroke="' + stroke + '" stroke-width="' + sw + '"/>';
+    } else {
+      svg += '<rect x="' + z.x + '" y="' + z.y + '" width="' + z.w + '" height="' + z.h + '" rx="' + z.rx + '" fill="' + fill + '" stroke="' + stroke + '" stroke-width="' + sw + '"/>';
+    }
+    // Dot
+    var dotC = isActive ? '#2dff8a' : 'rgba(15,15,10,0.65)';
+    var dotR = isActive ? 3 : 2;
+    if (isActive) {
+      svg += '<circle cx="' + z.dot[0] + '" cy="' + z.dot[1] + '" r="5" fill="rgba(45,255,138,0.2)" filter="url(#mg_glow)"/>';
+    }
+    svg += '<circle cx="' + z.dot[0] + '" cy="' + z.dot[1] + '" r="' + dotR + '" fill="' + dotC + '"' + (isActive ? ' filter="url(#mg_glow)"' : '') + '/>';
+    if (isActive) {
+      svg += '<circle cx="' + z.dot[0] + '" cy="' + z.dot[1] + '" r="1.2" fill="#fff"/>';
+    }
+  });
+  svg += '</g>';
 
-  // Draw small label
-  c.font = 'bold 8px sans-serif';
-  c.fillStyle = 'rgba(0,0,0,0.5)';
-  c.textAlign = 'center';
-  c.textBaseline = 'middle';
-  var labels = {
-    'tl':'TL','t':'TOP','tr':'TR',
-    'l':'L','c':'CTR','r':'R',
-    'bl':'BL','b':'BOT','br':'BR'
-  };
-  // Draw label slightly offset from dot
-  var labelOffsets = {
-    'tl':[0,10],'t':[0,12],'tr':[0,10],
-    'l':[12,0],'c':[0,12],'r':[-12,0],
-    'bl':[0,-10],'b':[0,-12],'br':[0,-10]
-  };
-  var off = labelOffsets[pos] || [0,12];
-  c.fillText(labels[pos]||'', activePos[0]+off[0], activePos[1]+off[1]);
+  // Rim + specular
+  svg += '<circle cx="36" cy="36" r="33" fill="none" stroke="rgba(150,120,50,0.5)" stroke-width="1.5"/>';
+  svg += '<ellipse cx="27" cy="23" rx="7" ry="4" fill="rgba(255,255,255,0.2)" transform="rotate(-25,27,23)"/>';
+  svg += '</svg>';
+
+  wrap.innerHTML = svg;
 }
 
 function handleEnglishClick(event) {
-  var cv = document.getElementById('english-canvas');
-  var rect = cv.getBoundingClientRect();
-  var x = (event.clientX - rect.left) * (72 / rect.width);
-  var y = (event.clientY - rect.top) * (72 / rect.height);
-  var col = x < 24 ? 0 : x < 48 ? 1 : 2;
-  var row = y < 24 ? 0 : y < 48 ? 1 : 2;
-  var grid = [
-    ['tl','t','tr'],
-    ['l','c','r'],
-    ['bl','b','br']
-  ];
-  setEnglish(grid[row][col]);
+  // Legacy — now handled by popup. Open popup instead.
+  openSpinPopup();
 }
 
 function getEnglishAdvice(cutAngle) {
@@ -1593,6 +1777,13 @@ function captureFrame(mode) {
     placeholder.style.display = 'none'; canvas.style.display = 'block';
     hideSuggestion();
     document.getElementById('detections-box').classList.remove('show');
+    document.getElementById('redetect-btn').style.display = 'none';
+    // Show english panel if toggle is on
+    if (document.getElementById('english-toggle').checked) {
+      document.getElementById('english-panel').style.display = '';
+    }
+    // Auto-scroll to canvas
+    setTimeout(() => document.getElementById('canvas-card').scrollIntoView({behavior:'smooth', block:'start'}), 120);
     playChime('scan');
     const label = mode === 'auto' ? '⚡ Auto-scan triggered' : '📸 Manual scan';
     setStatus(label + (modelReady ? ' — tap AI Detect for auto ball detection' : ' — mark balls manually'), 'gold');
@@ -1628,6 +1819,11 @@ function loadImageFile(file) {
     placeholder.style.display = 'none'; canvas.style.display = 'block';
     hideSuggestion();
     document.getElementById('detections-box').classList.remove('show');
+    document.getElementById('redetect-btn').style.display = 'none';
+    if (document.getElementById('english-toggle').checked) {
+      document.getElementById('english-panel').style.display = '';
+    }
+    setTimeout(() => document.getElementById('canvas-card').scrollIntoView({behavior:'smooth', block:'start'}), 120);
     setStatus('Photo loaded' + (modelReady ? ' — tap AI Detect' : ' — mark balls manually'), 'gold');
     URL.revokeObjectURL(url);
   };
@@ -1696,14 +1892,17 @@ function renderCanvas() {
 
 
   // ── CUE BALL PATH AFTER CONTACT (Spin Physics) ──
-  if (cue && objs.length > 0 && pkt) {
+  // Show path whenever cue + at least one object ball is marked (pocket optional)
+  if (cue && objs.length > 0) {
     const englishToggle = document.getElementById('english-toggle');
     const spinOn = englishToggle && englishToggle.checked;
-    const spin = spinOn ? currentEnglish : 'c';
+    const spin = spinOn ? (currentEnglish === 'stun' ? 'c' : currentEnglish) : 'c';
 
     const cx = cue.fx*W, cy = cue.fy*H;
     const ox = objs[0].fx*W, oy = objs[0].fy*H;
-    const px = pkt.fx*W, py = pkt.fy*H;
+    // If no pocket, use a perpendicular default for stun/center
+    const px = pkt ? pkt.fx*W : ox + (oy - cy); // fallback: perpendicular to shot
+    const py = pkt ? pkt.fy*H : oy - (ox - cx);
 
     // Shot direction vector (cue to object)
     const shotDx = ox - cx, shotDy = oy - cy;
@@ -1833,6 +2032,18 @@ function renderCanvas() {
     }
     ctx.lineWidth=2.5; ctx.fill(); ctx.stroke();
     ctx.shadowBlur=0; ctx.setLineDash([]);
+    // Tap-hint ring on cue ball
+    if (m.type === 'cue') {
+      ctx.save();
+      ctx.beginPath(); ctx.arc(x, y, R*1.7, 0, Math.PI*2);
+      ctx.strokeStyle = 'rgba(200,151,46,0.35)';
+      ctx.lineWidth = 1.2;
+      ctx.setLineDash([3,3]);
+      ctx.stroke();
+      ctx.restore();
+    }
+    // Label — explicitly reset dash so ring above doesn't bleed
+    ctx.setLineDash([]);
     ctx.font=`bold ${Math.round(R*.75)}px Barlow Condensed,sans-serif`;
     ctx.textAlign='center'; ctx.textBaseline='middle';
     const lbl = {cue:'C',obj:'S',eight:'8',stripe:'T',pocket:'P'}[m.type];
@@ -1887,8 +2098,8 @@ function suggestShot() {
   geo.innerHTML=''; hideSuggestion();
 
   if (!cue) {
-    titl.textContent='⚠️ No Cue Ball Marked';
-    body.textContent='Place the cue ball (C) first, then re-run the analysis.';
+    titl.textContent='Mark the Cue Ball First';
+    body.textContent='Tap the canvas to place the cue ball marker (C) — the app needs to know where you\'re shooting from before it can read the shot.';
     sug.classList.add('show'); return;
   }
 
@@ -1913,22 +2124,22 @@ function suggestShot() {
   let title='',advice='';
 
   if (gameMode==='8ball') {
-    title='🎱 8-Ball Read';
-    if (objs.length===0&&!eight) { advice='Mark your object balls and the 8-ball, then re-run.'; }
+    title='🎱 8-Ball';
+    if (objs.length===0&&!eight) { advice='Mark your object balls so the app knows which group you\'re shooting. Drop the 8-ball marker too if it\'s in play.'; }
     else if (eight&&objs.length===0) {
       const d=dist(cue,eight);
-      advice=`Shooting the 8-ball (${rangeWord(d)}). `;
-      advice+=pkt?`Angle ~${computeCutAngle(cue,eight,pkt)||'?'}°. Use center-ball contact. Avoid scratching.`:'Mark a target pocket (P) to see aim line.';
+      advice=`You're on the 8 — ${rangeWord(d)} shot. `;
+      advice+=pkt?`Cut angle is ~${computeCutAngle(cue,eight,pkt)||'?'}°. Play center-ball, stay down through the shot, and pick your pocket before you step in.`:'Mark your target pocket (P) to see the aim line and cut angle.';
     } else {
       advice=buildObjectAdvice(cue,targetBall,pkt,cutAngle,pocketInfo,cueToTarget,objs.length);
     }
   } else if (gameMode==='9ball') {
-    title='🔢 9-Ball Read';
-    if (!allTargets.length) { advice='Mark balls lowest-to-highest. You must contact the lowest-numbered ball first.'; }
+    title='🔢 9-Ball';
+    if (!allTargets.length) { advice='Mark the lowest ball on the table — in 9-ball you must contact it first. The app will read the angle and suggest how to play position for the next ball.'; }
     else { advice=build9BallAdvice(cue,targetBall,pkt,cutAngle,pocketInfo,cueToTarget); }
   } else {
-    title='🎯 Straight Pool Read';
-    if (!allTargets.length) { advice='Mark any ball you intend to call. Choose the shot that leaves your cue ball most central.'; }
+    title='🎯 Straight Pool';
+    if (!allTargets.length) { advice='Mark the ball you intend to call. In straight pool every shot is a call-shot — choose the one that not only pots the ball but leaves you with a makeable next shot.'; }
     else { advice=buildStraightAdvice(cue,targetBall,pkt,cutAngle,pocketInfo,cueToTarget,allTargets); }
   }
 
@@ -1950,7 +2161,7 @@ function suggestShot() {
   // ── 4. SAFETY SUGGESTION for hard shots
   let safetyNote = '';
   if (difficulty >= 7) {
-    safetyNote = ' ⚠️ SAFETY PLAY: Difficulty ' + difficulty + '/10 — consider driving your ball to the rail and leaving your opponent no easy shot instead of attempting this.';
+    safetyNote = ' 🛡️ At difficulty ' + difficulty + '/10, seriously weigh a safety — drive your ball to the rail and leave your opponent without an easy look. Making this shot requires near-perfect execution.';
   }
 
   // Remove old badge if exists
@@ -1968,9 +2179,25 @@ function suggestShot() {
   var englishAdvice = getEnglishAdvice(cutAngle);
   body.textContent = advice + englishAdvice + safetyNote;
   sug.classList.add('show');
+
+  // Coaching mode
+  var coachBox = document.getElementById('coaching-box');
+  var coachOn = document.getElementById('coaching-toggle').checked;
+  if (coachOn && coachBox) {
+    var spinState = document.getElementById('english-toggle').checked ? currentEnglish : 'c';
+    coachBox.innerHTML = buildCoachingText(cutAngle, difficulty, cueToTarget, spinState);
+    coachBox.classList.add('show');
+  } else if (coachBox) {
+    coachBox.classList.remove('show');
+  }
+
   playChime('suggestion');
   if (sourceImg) renderCanvas();
   setStatus('Difficulty ' + difficulty + '/10 · ' + diffLabel, 'gold');
+
+  // Save to shot history
+  saveToHistory(title, difficulty, cutAngle, gameMode);
+  saveSettings();
 }
 
 function addBadge(parent,text,cls) {
@@ -1979,29 +2206,35 @@ function addBadge(parent,text,cls) {
 
 function buildGeometryLine(cutAngle,pocketInfo) {
   if (cutAngle===null) return '';
-  if (cutAngle<8)  return 'Virtually straight-in — dead center hit. ';
-  if (cutAngle<25) return `Slight cut (${cutAngle}°) — aim just off-center. `;
-  if (cutAngle<45) {
-    let l=`Moderate cut (${cutAngle}°) — use ghost-ball method. `;
-    l+=pocketInfo?.corner?'Corner pocket is forgiving here. ':'Side pocket — aim for near jaw. ';
+  if (cutAngle<8)  return 'Dead straight — hit the center of the ball and let it run. Don\'t overthink it. ';
+  if (cutAngle<20) return `Slight cut at ${cutAngle}° — aim just a hair off center toward the pocket side. Very makeable. `;
+  if (cutAngle<35) {
+    let l=`${cutAngle}° cut — use the ghost-ball method. Visualize an imaginary ball sitting against the object ball on the line to the pocket, and aim at its center. `;
+    l+=pocketInfo?.corner?'Corner pocket gives you a little room to work with. ':'Side pocket is tighter — pick a jaw and commit. ';
     return l;
   }
-  if (cutAngle<65) return `Hard cut (${cutAngle}°) — thin hit required. `+(pocketInfo?.corner?'Low English after contact. ':'Consider a safety. ');
-  return `Extreme cut (${cutAngle}°) — near-impossible angle. Strongly consider a safety. `;
+  if (cutAngle<50) {
+    let l=`${cutAngle}° is a meaningful cut — aim for the far edge of the object ball. `;
+    l+=pocketInfo?.corner?'Corner pocket: a touch of low inside english can help hold the line. ':'Side pocket: dead-center aim, no extras. ';
+    return l;
+  }
+  if (cutAngle<65) return `Hard cut at ${cutAngle}° — you\'re barely grazing the object ball. Any unwanted spin or miscue will throw it offline. Stay smooth and stay down. `+(pocketInfo?.corner?'Running english off the corner can save position. ':'Consider whether a safety gives you more. ');
+  return `${cutAngle}° is an extreme cut — very low percentage. The contact point is almost at the edge of the ball. Unless you\'re desperate, a well-played safety is the smarter call here. `;
 }
 
 function buildRangeLine(d) {
-  if (d<.15) return 'Very close — feather stroke only. ';
-  if (d<.3)  return 'Short range — controlled medium-slow stroke. ';
-  if (d<.5)  return 'Mid-range — one smooth backswing. ';
-  return 'Long range — slow backswing, stay still through the shot. ';
+  if (d<.15) return 'Very close — a soft touch is all you need. Resist the urge to hit it hard. ';
+  if (d<.3)  return 'Short range shot — controlled, medium-slow stroke. Let the cue do the work. ';
+  if (d<.5)  return 'Mid-table distance — one smooth, even backswing. Accelerate through the cue ball. ';
+  return 'Long-range shot — slow your backswing right down, pause at the back, and stay completely still through contact. Speed kills accuracy at this distance. ';
 }
 
 function buildPositionLine(cutAngle) {
-  if (cutAngle===null) return 'Mark a pocket for position advice.';
-  if (cutAngle<25) return 'Follow (top-spin) brings cue ball forward along the rail.';
-  if (cutAngle<50) return 'Stun or slight draw keeps cue ball near center table.';
-  return 'Low English (draw) pulls cue ball back from the rail.';
+  if (cutAngle===null) return 'Mark a pocket to unlock position advice.';
+  if (cutAngle<15) return 'Position tip: follow shot sends the cue ball straight up the table. Draw brings it back toward you. Pick your next ball first.';
+  if (cutAngle<35) return 'Position tip: a touch of follow narrows your angle off the rail. Stun keeps you closer to the center of the table.';
+  if (cutAngle<55) return 'Position tip: stun or soft draw gives you the most control over where the cue ball lands. Avoid running english here — too unpredictable.';
+  return 'Position tip: draw shot will kick the cue ball back sharply after contact. Be careful — at this angle it can travel further than expected.';
 }
 
 function buildObjectAdvice(cue,target,pkt,cutAngle,pocketInfo,d,totalObjs) {
@@ -2010,19 +2243,26 @@ function buildObjectAdvice(cue,target,pkt,cutAngle,pocketInfo,d,totalObjs) {
     a+=buildGeometryLine(cutAngle,pocketInfo);
     a+=buildRangeLine(d);
     a+=buildPositionLine(cutAngle);
-    if (totalObjs>1) a+=` ${totalObjs} object balls — plan your run-out.`;
+    if (totalObjs>1) a+=` You have ${totalObjs} balls on the table — after this shot, think one ahead.`;
   } else {
     a+=buildRangeLine(d);
-    a+='Mark a target pocket (P) for cut-angle analysis. ';
-    if (totalObjs>1) a+=`${totalObjs} balls marked — choose the one nearest a pocket.`;
+    a+='Tap the canvas to mark your target pocket (P) — that unlocks the cut angle, aim line, and position advice. ';
+    if (totalObjs>1) a+=`${totalObjs} balls marked — pick the one with the best angle to a pocket.`;
   }
   return a;
 }
 
 function build9BallAdvice(cue,target,pkt,cutAngle,pocketInfo,d) {
-  let a='Strike the lowest-numbered ball first. ';
-  if (pkt) { a+=buildGeometryLine(cutAngle,pocketInfo); a+=buildRangeLine(d); a+=buildPositionLine(cutAngle); }
-  else { a+=buildRangeLine(d); a+='Mark a pocket (P) for geometry. A safety is strong when the angle is brutal.'; }
+  let a='Contact the lowest ball first — that\'s the rule, no exceptions. ';
+  if (pkt) {
+    a+=buildGeometryLine(cutAngle,pocketInfo);
+    a+=buildRangeLine(d);
+    a+=buildPositionLine(cutAngle);
+    a+=' In 9-ball, position for the next ball is everything — the shot you make matters less than where the cue ball stops.';
+  } else {
+    a+=buildRangeLine(d);
+    a+='Mark a target pocket to see the angle. And remember — in 9-ball a good safety on a tough shot is a strong play, not a surrender.';
+  }
   return a;
 }
 
@@ -2032,12 +2272,13 @@ function buildStraightAdvice(cue,target,pkt,cutAngle,pocketInfo,d,allTargets) {
   if (pkt) {
     a+=buildGeometryLine(cutAngle,pocketInfo);
     a+=buildRangeLine(d);
-    if (clusters>0) a+=`Cluster of ${clusters+1} nearby — weigh break shot vs single pot. `;
+    if (clusters>0) a+=`There\'s a cluster of ${clusters+1} balls nearby — weigh whether breaking it open now sets up a better run than potting the single. `;
     a+=buildPositionLine(cutAngle);
+    a+=' Straight pool is won by leaving yourself in position, not just pocketing balls.';
   } else {
     a+=buildRangeLine(d);
-    if (clusters>0) a+=`Cluster detected — consider a break shot. `;
-    a+='Mark a pocket (P) for geometry. A safety is always a valid call.';
+    if (clusters>0) a+='There\'s a cluster nearby — a well-aimed break shot could open several balls at once. ';
+    a+='Mark a target pocket for full geometry analysis. In straight pool, the shot you don\'t take is often your best weapon.';
   }
   return a;
 }
@@ -2051,6 +2292,22 @@ canvas.addEventListener('pointerdown', function(e) {
   const rect=canvas.getBoundingClientRect();
   const fx=((e.clientX-rect.left)*(canvas.width/rect.width))/canvas.width;
   const fy=((e.clientY-rect.top)*(canvas.height/rect.height))/canvas.height;
+
+  // Check if tapping an existing cue ball marker → open spin popup
+  // Only intercept if NOT in cue-placement mode (so you can still re-place the cue)
+  const cueMark = marks.find(m => m.type === 'cue');
+  if (cueMark && markMode !== 'cue') {
+    const R = Math.max(9, Math.min(canvas.width, canvas.height) * 0.027);
+    const tapX = fx * canvas.width;
+    const tapY = fy * canvas.height;
+    const markX = cueMark.fx * canvas.width;
+    const markY = cueMark.fy * canvas.height;
+    if (Math.hypot(tapX - markX, tapY - markY) < R * 2.2) {
+      openSpinPopup();
+      return;
+    }
+  }
+
   if (markMode==='cue')    marks=marks.filter(m=>m.type!=='cue');
   if (markMode==='eight')  marks=marks.filter(m=>m.type!=='eight');
   if (markMode==='pocket') marks=marks.filter(m=>m.type!=='pocket');
@@ -2059,7 +2316,7 @@ canvas.addEventListener('pointerdown', function(e) {
   const names={cue:'Cue ball',obj:'Solid ball',eight:'8-ball',stripe:'Stripe ball',pocket:'Target pocket'};
   const pktCount = marks.filter(m=>m.type==='pocket').length;
   const pktMsg = pktCount > 0 ? ' · ' + pktCount + ' pocket(s) marked' : '';
-  setStatus(names[markMode]+' placed — '+marks.length+' mark(s)'+pktMsg,'gold');
+  setStatus(names[markMode]+' placed — '+marks.length+' mark(s)'+pktMsg+(markMode==='cue'?' · tap ⚪ to set spin':''),'gold');
 });
 
 function setMode(mode) {
@@ -2071,6 +2328,7 @@ function setGame(mode,el) {
   gameMode=mode;
   document.querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));
   el.classList.add('active'); hideSuggestion();
+  saveSettings();
 }
 
 function undoMark() {
@@ -2163,6 +2421,190 @@ window.addEventListener('load', () => {
 /* ═══════════════════════════════════════════
    HELP MODAL
 ═══════════════════════════════════════════ */
+/* ═══════════════════════════════════════════
+   CUE BALL SPIN POPUP
+═══════════════════════════════════════════ */
+
+function buildSpinSVG(activePosId) {
+  var wrap = document.getElementById('spin-svg-wrap');
+
+  function resolveActive(posId) {
+    if (posId === 'tl' || posId === 'tr') return 't';
+    if (posId === 'bl' || posId === 'br') return 'b';
+    return posId;
+  }
+  var activeId = resolveActive(activePosId);
+
+  // ViewBox = 200x200, ball fills it entirely, center=100,100, radius=98
+  var CX = 100, CY = 100, R = 98;
+
+  // Zone shapes — proportional to reference image
+  // All coordinates relative to 200x200 viewBox
+  var zones = [
+    // Follow — tall vertical pill, upper center
+    { id:'t',    shape:'rect', x:86, y:5,   w:28, h:58, rx:14, dot:[100,30] },
+    // Draw — tall vertical pill, lower center
+    { id:'b',    shape:'rect', x:86, y:148, w:28, h:48, rx:14, dot:[100,168] },
+    // Stun — short pill, between center and draw, clearly separated
+    { id:'stun', shape:'rect', x:86, y:120, w:28, h:26, rx:13, dot:[100,132] },
+    // Left English — wide horizontal pill, left
+    { id:'l',    shape:'rect', x:5,  y:86,  w:58, h:28, rx:14, dot:[30,100] },
+    // Right English — wide horizontal pill, right
+    { id:'r',    shape:'rect', x:137,y:86,  w:58, h:28, rx:14, dot:[170,100] },
+    // Center — small circle, sits between follow and stun with clear gap
+    { id:'c',    shape:'circle', cx:100, cy:100, cr:16,  dot:[100,100] }
+  ];
+
+  var zoneColors = {
+    't':    { bf:'rgba(50,48,42,0.65)', af:'rgba(52,201,106,0.55)',  bs:'rgba(100,90,60,0.7)', as:'rgba(52,201,106,1)'   },
+    'stun': { bf:'rgba(50,48,42,0.65)', af:'rgba(224,136,32,0.55)',  bs:'rgba(100,90,60,0.7)', as:'rgba(224,136,32,1)'   },
+    'b':    { bf:'rgba(50,48,42,0.65)', af:'rgba(100,149,255,0.55)', bs:'rgba(100,90,60,0.7)', as:'rgba(100,149,255,1)'  },
+    'l':    { bf:'rgba(50,48,42,0.65)', af:'rgba(255,200,50,0.55)',  bs:'rgba(100,90,60,0.7)', as:'rgba(255,200,50,1)'   },
+    'r':    { bf:'rgba(50,48,42,0.65)', af:'rgba(255,200,50,0.55)',  bs:'rgba(100,90,60,0.7)', as:'rgba(255,200,50,1)'   },
+    'c':    { bf:'rgba(50,48,42,0.65)', af:'rgba(240,232,213,0.45)', bs:'rgba(100,90,60,0.7)', as:'rgba(240,232,213,0.95)'}
+  };
+
+  var svg = '<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><defs>';
+
+  // Ball gradient
+  svg += '<radialGradient id="sg_ball" cx="37%" cy="31%" r="68%">' +
+         '<stop offset="0%" stop-color="#ffffff"/>' +
+         '<stop offset="28%" stop-color="#f5ede0"/>' +
+         '<stop offset="62%" stop-color="#ddd0aa"/>' +
+         '<stop offset="100%" stop-color="#a88840"/>' +
+         '</radialGradient>';
+
+  // Inset sheen on zones
+  svg += '<linearGradient id="sg_sheen" x1="0" y1="0" x2="0" y2="1">' +
+         '<stop offset="0%" stop-color="rgba(255,255,255,0.22)"/>' +
+         '<stop offset="100%" stop-color="rgba(0,0,0,0.28)"/>' +
+         '</linearGradient>';
+
+  // Clip to exact ball circle — zones that extend outside get clipped cleanly
+  svg += '<clipPath id="sg_clip"><circle cx="' + CX + '" cy="' + CY + '" r="' + R + '"/></clipPath>';
+
+  // Green glow for active dot
+  svg += '<filter id="sg_glow" x="-100%" y="-100%" width="300%" height="300%">' +
+         '<feGaussianBlur stdDeviation="4" result="b"/>' +
+         '<feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>' +
+         '</filter>';
+
+  svg += '</defs>';
+
+  // Ball base
+  svg += '<circle cx="' + CX + '" cy="' + CY + '" r="' + R + '" fill="url(#sg_ball)"/>';
+
+  // Curved surface lines — clipped to ball
+  svg += '<g clip-path="url(#sg_clip)" fill="none" stroke="rgba(140,120,72,0.3)" stroke-width="1.5">';
+  svg += '<ellipse cx="100" cy="100" rx="30" ry="97"/>';   // vertical oval
+  svg += '<ellipse cx="100" cy="100" rx="97" ry="30"/>';   // horizontal oval
+  svg += '</g>';
+
+  // Zones — clipped so they never bleed outside the ball
+  svg += '<g clip-path="url(#sg_clip)">';
+  zones.forEach(function(z) {
+    var isActive = (z.id === activeId);
+    var c = zoneColors[z.id];
+    var fill   = isActive ? c.af : c.bf;
+    var stroke = isActive ? c.as : c.bs;
+    var sw = isActive ? '2.5' : '1';
+
+    if (z.shape === 'circle') {
+      svg += '<circle cx="' + z.cx + '" cy="' + z.cy + '" r="' + z.cr + '"' +
+             ' fill="' + fill + '" stroke="' + stroke + '" stroke-width="' + sw + '"' +
+             ' class="spin-zone" onclick="selectSpinZone(\'' + z.id + '\')" style="cursor:pointer"/>';
+      // Sheen overlay
+      svg += '<circle cx="' + z.cx + '" cy="' + (z.cy - 3) + '" r="' + (z.cr - 5) + '"' +
+             ' fill="url(#sg_sheen)" pointer-events="none"/>';
+    } else {
+      svg += '<rect x="' + z.x + '" y="' + z.y + '" width="' + z.w + '" height="' + z.h + '" rx="' + z.rx + '"' +
+             ' fill="' + fill + '" stroke="' + stroke + '" stroke-width="' + sw + '"' +
+             ' class="spin-zone" onclick="selectSpinZone(\'' + z.id + '\')" style="cursor:pointer"/>';
+      // Sheen overlay inside pill
+      svg += '<rect x="' + (z.x+3) + '" y="' + (z.y+3) + '" width="' + (z.w-6) + '" height="' + (z.h-6) + '" rx="' + (z.rx-2) + '"' +
+             ' fill="url(#sg_sheen)" pointer-events="none"/>';
+    }
+
+    // Contact dot — black when inactive, glowing green when active
+    if (isActive) {
+      svg += '<circle cx="' + z.dot[0] + '" cy="' + z.dot[1] + '" r="10"' +
+             ' fill="rgba(45,255,138,0.2)" pointer-events="none"/>';
+      svg += '<circle cx="' + z.dot[0] + '" cy="' + z.dot[1] + '" r="6"' +
+             ' fill="#2dff8a" filter="url(#sg_glow)" pointer-events="none"/>';
+      svg += '<circle cx="' + z.dot[0] + '" cy="' + z.dot[1] + '" r="2.5"' +
+             ' fill="#fff" pointer-events="none"/>';
+    } else {
+      svg += '<circle cx="' + z.dot[0] + '" cy="' + z.dot[1] + '" r="5"' +
+             ' fill="rgba(10,8,5,0.8)" pointer-events="none"/>';
+    }
+  });
+  svg += '</g>';
+
+  // Ball rim
+  svg += '<circle cx="' + CX + '" cy="' + CY + '" r="' + R + '"' +
+         ' fill="none" stroke="rgba(140,115,50,0.6)" stroke-width="2"/>';
+  // Specular highlight
+  svg += '<ellipse cx="82" cy="68" rx="18" ry="11"' +
+         ' fill="rgba(255,255,255,0.18)" transform="rotate(-30,82,68)" pointer-events="none"/>';
+
+  svg += '</svg>';
+  wrap.innerHTML = svg;
+}
+
+function openSpinPopup() {
+  // Auto-enable english toggle if not on
+  var toggle = document.getElementById('english-toggle');
+  if (toggle && !toggle.checked) {
+    toggle.checked = true;
+    // Show panel without re-triggering this popup
+    document.getElementById('english-panel').style.display = '';
+    drawEnglishSVG(currentEnglish);
+  }
+  buildSpinSVG(currentEnglish);
+  updateSpinPopupInfo(currentEnglish);
+  document.getElementById('spin-popup-overlay').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeSpinPopup() {
+  document.getElementById('spin-popup-overlay').classList.remove('show');
+  document.body.style.overflow = '';
+  drawEnglishSVG(currentEnglish); // keep panel in sync
+}
+
+function closeSpinPopupOnOverlay(e) {
+  if (e.target === document.getElementById('spin-popup-overlay')) closeSpinPopup();
+}
+
+function selectSpinZone(posId) {
+  // Haptic feedback
+  if (navigator.vibrate) navigator.vibrate(18);
+  // Map 'stun' to center-bottom area — use 'b' with a note, or treat as a named position
+  // We'll add 'stun' as a real entry mapped to a slightly-below-center hit
+  if (posId === 'stun') {
+    currentEnglish = 'stun';
+    // stun uses same physics as center but with a distinct label
+    updateSpinPopupInfo('stun');
+    buildSpinSVG('stun');
+    // Sync main english panel
+    document.getElementById('english-name').textContent = 'Stun Shot';
+    document.getElementById('english-desc').textContent = 'Cue ball stops dead on contact (or near-stop). Hit just below center with a firm stroke.';
+    if (sourceImg) renderCanvas();
+    return;
+  }
+  setEnglish(posId); // uses existing logic
+  buildSpinSVG(posId);
+  updateSpinPopupInfo(posId);
+  drawEnglishSVG(posId);
+}
+
+function updateSpinPopupInfo(posId) {
+  var stunData = { name: 'Stun Shot', desc: 'Cue ball stops dead on contact (or near-stop). Hit just below center with a firm stroke.' };
+  var data = posId === 'stun' ? stunData : (ENGLISH_DATA[posId] || ENGLISH_DATA['c']);
+  document.getElementById('spin-popup-name').textContent = data.name;
+  document.getElementById('spin-popup-desc').textContent = data.desc;
+}
+
 function toggleHelp() {
   var el = document.getElementById('help-overlay');
   if (!el) { alert('Help not found'); return; }
@@ -2185,21 +2627,174 @@ function closeHelpOnOverlay(e) {
 }
 
 /* ═══════════════════════════════════════════
+   LOCALSTORAGE — PERSIST SETTINGS
+═══════════════════════════════════════════ */
+function saveSettings() {
+  try {
+    localStorage.setItem('rr_settings', JSON.stringify({
+      autoscan:  document.getElementById('autoscan-toggle').checked,
+      sens:      document.getElementById('sens-slider').value,
+      delay:     document.getElementById('delay-slider').value,
+      chime:     document.getElementById('chime-toggle').checked,
+      conf:      document.getElementById('conf-slider').value,
+      english:   document.getElementById('english-toggle').checked,
+      coaching:  document.getElementById('coaching-toggle').checked,
+      gameMode:  gameMode,
+      spin:      currentEnglish
+    }));
+  } catch(e) {}
+}
+
+function loadSettings() {
+  try {
+    var s = JSON.parse(localStorage.getItem('rr_settings') || 'null');
+    if (!s) return;
+    if (s.autoscan !== undefined) { document.getElementById('autoscan-toggle').checked = s.autoscan; autoScan = s.autoscan; }
+    if (s.sens) { document.getElementById('sens-slider').value = s.sens; document.getElementById('sens-val').textContent = s.sens; updateSensitivity(); }
+    if (s.delay) { document.getElementById('delay-slider').value = s.delay; document.getElementById('delay-val').textContent = (s.delay/10).toFixed(1)+'s'; updateDelay(); }
+    if (s.chime !== undefined) document.getElementById('chime-toggle').checked = s.chime;
+    if (s.conf) { document.getElementById('conf-slider').value = s.conf; document.getElementById('conf-val').textContent = s.conf+'%'; CONF_THRESHOLD = parseInt(s.conf)/100; }
+    if (s.english !== undefined) { document.getElementById('english-toggle').checked = s.english; }
+    if (s.coaching !== undefined) document.getElementById('coaching-toggle').checked = s.coaching;
+    if (s.gameMode) {
+      gameMode = s.gameMode;
+      document.querySelectorAll('.pill').forEach(p => p.classList.toggle('active', p.textContent.toLowerCase().replace('-','').includes(s.gameMode.replace('ball',''))));
+    }
+    if (s.spin) { currentEnglish = s.spin; }
+  } catch(e) {}
+}
+
+// Auto-save settings on any change — deferred so all functions are defined
+window.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('input[type=checkbox], input[type=range]').forEach(function(el) {
+    el.addEventListener('change', saveSettings);
+    el.addEventListener('input', saveSettings);
+  });
+});
+
+/* ═══════════════════════════════════════════
+   SHOT HISTORY
+═══════════════════════════════════════════ */
+var shotHistory = [];
+try { shotHistory = JSON.parse(localStorage.getItem('rr_history') || '[]'); } catch(e) {}
+
+function saveToHistory(title, difficulty, cutAngle, gameModeName) {
+  if (!sourceImg || !canvas) return;
+  try {
+    // Thumbnail from canvas
+    var thumb = document.createElement('canvas');
+    thumb.width = 104; thumb.height = 76;
+    thumb.getContext('2d').drawImage(canvas, 0, 0, 104, 76);
+    var dataUrl = thumb.toDataURL('image/jpeg', 0.6);
+    var entry = {
+      id: Date.now(),
+      title: title,
+      difficulty: difficulty,
+      cutAngle: cutAngle,
+      game: gameModeName,
+      thumb: dataUrl,
+      time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})
+    };
+    shotHistory.unshift(entry);
+    if (shotHistory.length > 5) shotHistory.pop();
+    localStorage.setItem('rr_history', JSON.stringify(shotHistory));
+    renderHistory();
+  } catch(e) {}
+}
+
+function renderHistory() {
+  var list = document.getElementById('history-list');
+  var panel = document.getElementById('history-panel');
+  if (!list || !shotHistory.length) { if (panel) panel.style.display = 'none'; return; }
+  panel.style.display = '';
+  list.innerHTML = shotHistory.map(function(e) {
+    var diffColor = e.difficulty <= 3 ? '#34c96a' : e.difficulty <= 6 ? '#e08820' : '#cc2222';
+    return '<div class="history-item">' +
+      '<img class="history-thumb" src="' + e.thumb + '" alt="shot"/>' +
+      '<div class="history-info">' +
+        '<div class="history-title">' + e.title + '</div>' +
+        '<div class="history-meta">' + e.game + ' · ' + (e.cutAngle !== null ? e.cutAngle + '° cut · ' : '') + e.time + '</div>' +
+      '</div>' +
+      '<div class="history-diff" style="color:' + diffColor + '">' + e.difficulty + '/10</div>' +
+    '</div>';
+  }).join('');
+}
+
+function clearHistory() {
+  shotHistory = [];
+  localStorage.removeItem('rr_history');
+  renderHistory();
+}
+
+/* ═══════════════════════════════════════════
+   COACHING MODE
+═══════════════════════════════════════════ */
+function buildCoachingText(cutAngle, difficulty, cueToTarget, spin) {
+  var lines = [];
+
+  if (cutAngle !== null) {
+    if (cutAngle < 10) lines.push('<strong>Straight shot:</strong> Aim directly at the center of the object ball. The cue ball will follow through along the shot line.');
+    else if (cutAngle < 30) lines.push('<strong>Thin cut (' + cutAngle + '°):</strong> Use the ghost-ball method — imagine a ghost ball touching the object ball on the line to the pocket, aim the cue ball at that ghost ball\'s center.');
+    else if (cutAngle < 55) lines.push('<strong>Moderate cut (' + cutAngle + '°):</strong> The object ball travels roughly perpendicular to your cue stick angle. Visualize where the contact point is on the object ball, not the pocket itself.');
+    else lines.push('<strong>Hard cut (' + cutAngle + '°):</strong> You\'re hitting near the edge of the object ball. Very thin contact — your cue tip barely grazes it. Any miscue or unintended spin will throw the ball offline.');
+  }
+
+  if (cueToTarget !== null) {
+    if (cueToTarget > 0.55) lines.push('<strong>Long distance:</strong> Speed control is critical. Use a slow, smooth backswing — rushing long shots is the #1 cause of misses.');
+    else if (cueToTarget < 0.2) lines.push('<strong>Short distance:</strong> Don\'t rush — short shots are often missed due to overconfidence. Slow down, stay down on the shot.');
+  }
+
+  if (spin && spin !== 'c') {
+    var spinTips = {
+      't': '<strong>Follow (top spin):</strong> Strike above center. The cue ball will roll forward after contact — useful for chasing position up the table.',
+      'b': '<strong>Draw (back spin):</strong> Strike below center with a firm stroke. The cue ball reverses direction after contact — great for avoiding scratches.',
+      'stun': '<strong>Stun shot:</strong> Strike just below center on a firm stroke. The cue ball stops dead or near-dead — gives you the most control over cue ball position.',
+      'l': '<strong>Left english:</strong> Causes throw — the object ball deflects slightly right. Aim a little left to compensate.',
+      'r': '<strong>Right english:</strong> Causes throw — the object ball deflects slightly left. Aim a little right to compensate.'
+    };
+    if (spinTips[spin]) lines.push(spinTips[spin]);
+  }
+
+  if (difficulty >= 7) lines.push('<strong>Safety option:</strong> At difficulty ' + difficulty + '/10, consider whether a safety play leaves your opponent in a worse position than a low-percentage shot attempt.');
+
+  return lines.join('<br><br>');
+}
+
+/* ═══════════════════════════════════════════
    INIT
 ═══════════════════════════════════════════ */
 console.log('DEBUG: Starting init...');
 try {
+  loadSettings();
   updateSensitivity();
   console.log('DEBUG: updateSensitivity OK');
   updateDelay();
   console.log('DEBUG: updateDelay OK');
   loadModel();
   console.log('DEBUG: loadModel called');
+  drawEnglishSVG(currentEnglish);
+  renderHistory();
 } catch(e) {
   console.error('DEBUG: Init crashed:', e.message, e.stack);
   document.getElementById('model-msg').textContent = 'Init error: ' + e.message;
 }
 </script>
+<!-- SPIN POPUP -->
+<div class="spin-popup-overlay" id="spin-popup-overlay" onclick="closeSpinPopupOnOverlay(event)">
+  <div class="spin-popup" id="spin-popup">
+    <div class="spin-popup-title">Cue Ball Contact Point</div>
+    <button class="spin-popup-close" onclick="closeSpinPopup()">&#10005;</button>
+    <div class="spin-ball-container">
+      <div class="spin-svg-wrap" id="spin-svg-wrap"></div>
+      <div class="spin-info-panel">
+        <div class="spin-info-name" id="spin-popup-name">Center Ball</div>
+        <div class="spin-info-desc" id="spin-popup-desc">No spin — most accurate. Best for long shots and thin cuts.</div>
+        <button class="spin-reset-btn" onclick="selectSpinZone('c')">Reset to center</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- HELP MODAL -->
   <div class="help-overlay" id="help-overlay" onclick="closeHelpOnOverlay(event)">
     <div class="help-modal" id="help-modal">
@@ -2270,11 +2865,19 @@ try {
         <div class="help-section-title">🎱 English / Spin Control</div>
         <div class="help-item">
           <div class="help-icon">🔛</div>
-          <div><div class="help-item-title">Enable in Settings</div><div class="help-item-desc">Turn on the English/Spin toggle in Auto-Scan Settings. An interactive cue ball diagram appears.</div></div>
+          <div><div class="help-item-title">Enable in Settings</div><div class="help-item-desc">Toggle on English/Spin Control — the popup opens immediately so you can set your contact point right away.</div></div>
         </div>
         <div class="help-item">
-          <div class="help-icon">👆</div>
-          <div><div class="help-item-title">Tap the Cue Ball</div><div class="help-item-desc">Top = follow. Bottom = draw/backspin. Left/Right = side english. Corners = running or reverse english.</div></div>
+          <div class="help-icon">🎱</div>
+          <div><div class="help-item-title">Tap the Cue Ball Diagram</div><div class="help-item-desc">A cue ball diagram pops up with 6 zones: Follow (top), Draw (bottom), Stun (just below center), Left English, Right English, and Center Ball. Tap any zone to select it.</div></div>
+        </div>
+        <div class="help-item">
+          <div class="help-icon">⚪</div>
+          <div><div class="help-item-title">Tap On Canvas Too</div><div class="help-item-desc">Once you've placed the cue ball marker on the canvas, tap it (while in any mode other than Cue) to reopen the spin popup anytime.</div></div>
+        </div>
+        <div class="help-item">
+          <div class="help-icon">➡️</div>
+          <div><div class="help-item-title">Path Line on Canvas</div><div class="help-item-desc">After marking cue ball and target, a colored path line shows where the cue ball will travel after contact based on your spin selection.</div></div>
         </div>
       </div>
 
