@@ -1014,15 +1014,21 @@ input[type=range] { flex:1; height:4px; accent-color:var(--green-soft); cursor:p
         </label>
       </div>
       <div class="div"></div>
-      <div class="autoscan-row">
-        <div>
+      <div class="autoscan-row" style="align-items:center;gap:10px">
+        <div style="flex:1;min-width:0">
           <div class="autoscan-label">🎱 English / Spin Control</div>
           <div class="autoscan-desc">Tap cue ball to set contact point — affects shot advice</div>
         </div>
-        <label class="toggle">
+        <!-- Mini tappable ball — always visible when toggle is on -->
+        <div id="settings-spin-ball" onclick="openSpinPopup()"
+          style="display:none;width:44px;height:44px;flex-shrink:0;cursor:pointer;border-radius:50%;
+                 box-shadow:0 0 0 2px rgba(200,151,46,0.4);transition:box-shadow .2s"
+          title="Tap to change spin"></div>
+        <label class="toggle" style="flex-shrink:0">
           <input type="checkbox" id="english-toggle" onchange="toggleEnglish()">
           <div class="toggle-track"></div>
         </label>
+      </div>
       </div>
     </div>
 
@@ -1499,14 +1505,15 @@ var ENGLISH_DATA = {
 function toggleEnglish() {
   var on = document.getElementById('english-toggle').checked;
   var panel = document.getElementById('english-panel');
+  var settingsBall = document.getElementById('settings-spin-ball');
   if (on) {
-    // Always show the panel when toggled on
     panel.style.display = '';
+    if (settingsBall) settingsBall.style.display = 'block';
     drawEnglishSVG(currentEnglish);
-    // Open the popup so user can set spin immediately
     setTimeout(openSpinPopup, 150);
   } else {
     panel.style.display = 'none';
+    if (settingsBall) settingsBall.style.display = 'none';
   }
 }
 
@@ -1525,7 +1532,12 @@ function drawEnglishBall(pos) {
 }
 
 function drawEnglishSVG(pos) {
-  var wrap = document.getElementById('english-svg-wrap');
+  _drawMiniSpinBall('english-svg-wrap', pos);
+  _drawMiniSpinBall('settings-spin-ball', pos);
+}
+
+function _drawMiniSpinBall(wrapId, pos) {
+  var wrap = document.getElementById(wrapId);
   if (!wrap) return;
   // Mini 72px version — same ball, smaller, no labels
   var S = 72, CX = 36, CY = 36, R = 33;
@@ -2654,7 +2666,13 @@ function loadSettings() {
     if (s.delay) { document.getElementById('delay-slider').value = s.delay; document.getElementById('delay-val').textContent = (s.delay/10).toFixed(1)+'s'; updateDelay(); }
     if (s.chime !== undefined) document.getElementById('chime-toggle').checked = s.chime;
     if (s.conf) { document.getElementById('conf-slider').value = s.conf; document.getElementById('conf-val').textContent = s.conf+'%'; CONF_THRESHOLD = parseInt(s.conf)/100; }
-    if (s.english !== undefined) { document.getElementById('english-toggle').checked = s.english; }
+    if (s.english !== undefined) {
+      document.getElementById('english-toggle').checked = s.english;
+      if (s.english) {
+        var sb = document.getElementById('settings-spin-ball');
+        if (sb) sb.style.display = 'block';
+      }
+    }
     if (s.coaching !== undefined) document.getElementById('coaching-toggle').checked = s.coaching;
     if (s.gameMode) {
       gameMode = s.gameMode;
