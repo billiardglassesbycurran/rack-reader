@@ -1942,6 +1942,7 @@ function renderCanvas() {
     objs.forEach(ob => {
       const cx = cue.fx*W, cy = cue.fy*H;
       const ox = ob.fx*W,  oy = ob.fy*H;
+      // Aim line: cue → object ball (always shown)
       ctx.save();
       ctx.setLineDash([8,5]); ctx.strokeStyle='rgba(200,151,46,0.8)';
       ctx.lineWidth=2.2; ctx.shadowColor='rgba(200,151,46,0.5)'; ctx.shadowBlur=8;
@@ -1950,14 +1951,15 @@ function renderCanvas() {
       if (pkt) {
         const px = pkt.fx*W, py = pkt.fy*H;
         const cutAngle = computeCutAngle(cue, ob, pkt);
+        // Object ball → pocket line (always shown)
         ctx.save();
         ctx.setLineDash([5,7]);
         ctx.strokeStyle = cutAngle < 30 ? 'rgba(52,201,106,0.7)' : cutAngle < 55 ? 'rgba(224,136,32,0.7)' : 'rgba(204,34,34,0.7)';
         ctx.lineWidth=1.8; ctx.shadowColor='rgba(45,255,138,0.4)'; ctx.shadowBlur=6;
         ctx.beginPath(); ctx.moveTo(ox,oy); ctx.lineTo(px,py); ctx.stroke();
         ctx.restore();
-        // Cut angle arc
-        if (cutAngle !== null) {
+        // Cut angle arc — overhead only (meaningless at playing angle)
+        if (cutAngle !== null && viewMode === 'overhead') {
           const inAngle  = Math.atan2(cy-oy, cx-ox);
           const outAngle = Math.atan2(py-oy, px-ox);
           ctx.save();
@@ -1966,20 +1968,23 @@ function renderCanvas() {
           ctx.lineWidth=2; ctx.setLineDash([]); ctx.stroke(); ctx.restore();
         }
       }
-      const ang = Math.atan2(cy-oy, cx-ox);
-      const gx  = ox + Math.cos(ang) * R*2.3;
-      const gy  = oy + Math.sin(ang) * R*2.3;
-      ctx.save();
-      ctx.beginPath(); ctx.arc(gx, gy, R, 0, Math.PI*2);
-      ctx.strokeStyle='rgba(240,232,213,0.5)'; ctx.lineWidth=1.5;
-      ctx.setLineDash([3,3]); ctx.stroke(); ctx.restore();
+      // Ghost ball — overhead only (perspective distorts its position)
+      if (viewMode === 'overhead') {
+        const ang = Math.atan2(cy-oy, cx-ox);
+        const gx  = ox + Math.cos(ang) * R*2.3;
+        const gy  = oy + Math.sin(ang) * R*2.3;
+        ctx.save();
+        ctx.beginPath(); ctx.arc(gx, gy, R, 0, Math.PI*2);
+        ctx.strokeStyle='rgba(240,232,213,0.5)'; ctx.lineWidth=1.5;
+        ctx.setLineDash([3,3]); ctx.stroke(); ctx.restore();
+      }
     });
   }
 
 
   // ── CUE BALL PATH AFTER CONTACT (Spin Physics) ──
-  // Show path whenever cue + at least one object ball is marked (pocket optional)
-  if (cue && objs.length > 0) {
+  // Only shown in Overhead View — perspective distortion makes it wrong in Player View
+  if (cue && objs.length > 0 && viewMode === 'overhead') {
     const englishToggle = document.getElementById('english-toggle');
     const spinOn = englishToggle && englishToggle.checked;
     const spin = spinOn ? (currentEnglish === 'stun' ? 'c' : currentEnglish) : 'c';
@@ -2094,7 +2099,9 @@ function renderCanvas() {
   marks.forEach(m => {
     const x = m.fx*W, y = m.fy*H;
     ctx.save();
-    ctx.beginPath(); ctx.arc(x, y, R, 0, Math.PI*2);
+    // Pocket gets a larger tap target in Player View
+    const mR = (m.type === 'pocket' && viewMode === 'player') ? R * 1.4 : R;
+    ctx.beginPath(); ctx.arc(x, y, mR, 0, Math.PI*2);
     ctx.shadowBlur=12; ctx.shadowColor='rgba(0,0,0,0.65)';
     if (m.type === 'cue') {
       const g = ctx.createRadialGradient(x-R*.32,y-R*.32,R*.08,x,y,R);
