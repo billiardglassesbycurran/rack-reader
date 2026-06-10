@@ -14,21 +14,21 @@
   --felt-bright: #1a3d29;
   --rail:        #1c0e04;
   --ivory:       #f0e8d5;
-  --ivory-dim:   #b8aa8e;
+  --ivory-dim:   #c8baa0;
   --gold:        #c8972e;
-  --gold-bright: #e0ab38;
-  --gold-dim:    #6b5018;
+  --gold-bright: #f0b840;
+  --gold-dim:    #8a6820;
   --cream:       #ede0c4;
   --green-neon:  #2dff8a;
-  --green-soft:  #34c96a;
+  --green-soft:  #3ddd7a;
   --green-dim:   #1a5c38;
   --red-ball:    #cc2222;
   --amber:       #e08820;
-  --text:        #ddeae2;
-  --text-dim:    #5a8068;
-  --text-muted:  #3a5545;
-  --border:      #1a3525;
-  --border-mid:  #234830;
+  --text:        #eef6f0;
+  --text-dim:    #7ab898;
+  --text-muted:  #4d7a62;
+  --border:      #1e3d2a;
+  --border-mid:  #2a5838;
   --surface:     #0b1a10;
   --surface2:    #101f16;
   --r:           10px;
@@ -45,6 +45,7 @@ html, body {
   background: var(--rail);
   color: var(--text);
   font-family: 'Barlow', sans-serif;
+  font-size: 15px;
   -webkit-font-smoothing: antialiased;
   -webkit-overflow-scrolling: touch;
 }
@@ -241,13 +242,21 @@ body::before {
   display:flex; gap:5px; z-index:5;
 }
 .icon-btn {
-  width:30px; height:30px; background:rgba(0,0,0,.7);
-  border:1px solid rgba(255,255,255,.15); border-radius:6px;
-  color:#fff; font-size:13px;
-  display:flex; align-items:center; justify-content:center;
+  height:32px; min-width:32px; background:rgba(0,0,0,.75);
+  border:1px solid rgba(255,255,255,.2); border-radius:7px;
+  color:#fff; font-size:13px; padding: 0 8px;
+  display:flex; align-items:center; justify-content:center; gap:4px;
   cursor:pointer; -webkit-tap-highlight-color:transparent; transition:background .15s;
+  font-family: 'Barlow', sans-serif; font-weight: 600; white-space: nowrap;
 }
 .icon-btn:hover { background:rgba(45,255,138,.3); }
+.undo-btn {
+  background: rgba(200,151,46,0.25);
+  border-color: rgba(200,151,46,0.5);
+  color: #f0b840;
+  font-size: 12px;
+  padding: 0 10px;
+}
 @keyframes flashIn { 0%{opacity:0} 30%{opacity:.7} 100%{opacity:0} }
 .capture-flash {
   position:absolute; inset:0; background:#fff;
@@ -276,8 +285,8 @@ body::before {
 }
 .card-label {
   font-family:'Barlow Condensed',sans-serif;
-  font-size:10px; font-weight:700; letter-spacing:2.5px;
-  text-transform:uppercase; color:var(--text-muted); margin-bottom:10px;
+  font-size:11px; font-weight:700; letter-spacing:2px;
+  text-transform:uppercase; color:var(--text-dim); margin-bottom:10px;
 }
 
 /* BUTTONS */
@@ -325,8 +334,8 @@ body::before {
 
 /* AUTOSCAN */
 .autoscan-row { display:flex; align-items:center; gap:10px; }
-.autoscan-label { font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:600; letter-spacing:.5px; color:var(--text); flex:1; }
-.autoscan-desc { font-size:11px; color:var(--text-muted); margin-top:1px; }
+.autoscan-label { font-family:'Barlow',sans-serif; font-size:14px; font-weight:600; color:var(--text); flex:1; }
+.autoscan-desc { font-size:12px; color:var(--text-dim); margin-top:2px; line-height:1.5; }
 .toggle { position:relative; width:42px; height:23px; flex-shrink:0; }
 .toggle input { opacity:0; width:0; height:0; position:absolute; }
 .toggle-track {
@@ -401,10 +410,10 @@ input[type=range] { flex:1; height:4px; accent-color:var(--green-soft); cursor:p
 }
 .suggestion.show { display:block; }
 .sug-title {
-  font-family:'Playfair Display',serif; font-size:15px; font-weight:700;
-  color:var(--green-soft); margin-bottom:7px; display:flex; align-items:center; gap:7px;
+  font-family:'Playfair Display',serif; font-size:17px; font-weight:700;
+  color:var(--green-soft); margin-bottom:8px; display:flex; align-items:center; gap:7px;
 }
-.sug-body { font-size:13.5px; color:var(--cream); line-height:1.7; }
+.sug-body { font-size:14.5px; color:var(--cream); line-height:1.75; }
 
 /* GEO BADGES */
 .geo-badges { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:8px; }
@@ -450,29 +459,44 @@ input[type=range] { flex:1; height:4px; accent-color:var(--green-soft); cursor:p
 
 
 /* ── LANDSCAPE MODE ── */
-@media screen and (orientation: landscape) and (max-height: 500px) {
-  .live-section { max-height: 35vw; }
-  #live-video { max-height: 35vw; min-height: 120px; }
-  .cam-off-msg { min-height: 120px; }
+@media screen and (orientation: landscape) {
+  #app { max-width: 100%; }
 
   .body {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto;
-    gap: 8px;
-    padding: 8px;
-    align-items: start;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 8px 12px 24px;
   }
 
-  .canvas-card { grid-column: 1; grid-row: 1 / 4; }
+  /* Canvas takes full width at top */
+  .canvas-card {
+    width: 100%;
+    max-height: 60vw;
+  }
 
-  .card:nth-of-type(1) { grid-column: 2; grid-row: 1; } /* autoscan */
-  .card:nth-of-type(2) { grid-column: 2; grid-row: 2; } /* mark balls */
-  .card:nth-of-type(3) { grid-column: 2; grid-row: 3; } /* game mode */
+  #main-canvas {
+    max-height: 60vw;
+    width: 100% !important;
+    object-fit: contain;
+  }
 
-  .upload-zone { grid-column: 2; grid-row: 4; }
+  /* Live video also full width */
+  .live-section { max-height: 55vw; }
+  #live-video { max-height: 55vw; width: 100%; }
 
-  #detections-box { grid-column: 1; }
+  /* Everything else stacks below at full width */
+  .card, .upload-zone, .detections-box, #history-panel,
+  #view-mode-card, #english-panel, #suggestion-card {
+    width: 100%;
+  }
+
+  /* Two-column layout for settings cards below canvas */
+  .below-canvas-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
 
   /* Larger suggestion text in landscape */
   .sug-body { font-size: 15px; line-height: 1.8; }
@@ -705,9 +729,9 @@ input[type=range] { flex:1; height:4px; accent-color:var(--green-soft); cursor:p
 }
 
 .help-item-desc {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--text-dim);
-  line-height: 1.6;
+  line-height: 1.65;
 }
 
 .help-tip {
@@ -716,9 +740,9 @@ input[type=range] { flex:1; height:4px; accent-color:var(--green-soft); cursor:p
   border-radius: 8px;
   padding: 10px 12px;
   margin: 10px 18px 0;
-  font-size: 12px;
+  font-size: 13px;
   color: var(--cream);
-  line-height: 1.6;
+  line-height: 1.65;
 }
 
 .help-tip strong { color: var(--gold-bright); }
@@ -761,7 +785,13 @@ input[type=range] { flex:1; height:4px; accent-color:var(--green-soft); cursor:p
   background: var(--gold);
   color: #1a1200;
 }
-.view-mode-pill .vmp-icon { font-size: 14px; display: block; margin-bottom: 1px; }
+.view-mode-pill .vmp-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 3px;
+  height: 22px;
+}
 .view-mode-pill .vmp-label { font-size: 10px; letter-spacing: 1px; }
 
 .view-mode-hint {
@@ -803,6 +833,60 @@ input[type=range] { flex:1; height:4px; accent-color:var(--green-soft); cursor:p
   font-size: 11px; font-weight: 700; flex-shrink: 0;
 }
 
+/* ── HISTORY RESTORE POPUP ── */
+.history-restore-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.75);
+  z-index: 300;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.history-restore-overlay.show { display: flex; }
+.history-restore-popup {
+  background: var(--felt);
+  border: 1.5px solid var(--gold-dim);
+  border-radius: 16px;
+  width: 300px; max-width: 92vw;
+  padding: 18px 18px 16px;
+  box-shadow: 0 8px 48px rgba(0,0,0,.9);
+  animation: popIn .2s cubic-bezier(.34,1.56,.64,1);
+}
+.history-restore-thumb {
+  width: 100%; height: 120px;
+  object-fit: cover; border-radius: 8px;
+  border: 1px solid var(--border-mid);
+  margin-bottom: 12px; display: block;
+}
+.history-restore-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 16px; font-weight: 700;
+  color: var(--gold-bright); margin-bottom: 3px;
+}
+.history-restore-meta {
+  font-size: 12px; color: var(--text-dim);
+  font-family: 'Barlow Condensed', sans-serif;
+  letter-spacing: .4px; margin-bottom: 12px;
+}
+.history-restore-question {
+  font-size: 14px; color: var(--text);
+  margin-bottom: 14px; line-height: 1.5;
+}
+.history-restore-btns { display: flex; gap: 8px; }
+.history-restore-btns button {
+  flex: 1; padding: 10px; border-radius: 8px; border: none;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 14px; font-weight: 700; letter-spacing: .5px;
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+.history-restore-yes { background: var(--gold); color: #1a1200; }
+.history-restore-no {
+  background: var(--surface2);
+  border: 1px solid var(--border-mid) !important;
+  color: var(--text-dim);
+}
+
 /* ── COACHING MODE ── */
 .coaching-box {
   display: none;
@@ -811,9 +895,9 @@ input[type=range] { flex:1; height:4px; accent-color:var(--green-soft); cursor:p
   border-radius: var(--r-sm);
   padding: 10px 12px;
   margin-top: 8px;
-  font-size: 12px;
+  font-size: 13px;
   color: var(--cream);
-  line-height: 1.7;
+  line-height: 1.75;
 }
 .coaching-box.show { display: block; }
 .coaching-box strong { color: var(--gold-bright); }
@@ -1069,6 +1153,51 @@ input[type=range] { flex:1; height:4px; accent-color:var(--green-soft); cursor:p
           <div class="toggle-track"></div>
         </label>
       </div>
+      <div class="div"></div>
+      <!-- AIMING AIDS -->
+      <div class="card-label" style="margin-top:4px">🎯 Aiming Aids</div>
+      <div class="autoscan-row">
+        <div>
+          <div class="autoscan-label">🟡 Target Line</div>
+          <div class="autoscan-desc">Aim line from cue tip through contact point to pocket</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="aim-targetline" checked onchange="renderCanvas()">
+          <div class="toggle-track"></div>
+        </label>
+      </div>
+      <div class="div"></div>
+      <div class="autoscan-row">
+        <div>
+          <div class="autoscan-label">🎱 Contact Point</div>
+          <div class="autoscan-desc">Crosshair on the exact hit point of the object ball</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="aim-contactpoint" checked onchange="renderCanvas()">
+          <div class="toggle-track"></div>
+        </label>
+      </div>
+      <div class="div"></div>
+      <div class="autoscan-row">
+        <div>
+          <div class="autoscan-label">🔵 Shaft Edge Guide</div>
+          <div class="autoscan-desc">Shows which cue shaft edge to align for the cut angle</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="aim-shaftedge" onchange="renderCanvas()">
+          <div class="toggle-track"></div>
+        </label>
+      </div>
+      <div class="div"></div>
+      <div class="autoscan-row">
+        <div>
+          <div class="autoscan-label">📐 Double-the-Distance</div>
+          <div class="autoscan-desc">DTD aim point marker for precise cut angle targeting</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="aim-dtd" onchange="renderCanvas()">
+          <div class="toggle-track"></div>
+        </label>
       </div>
     </div>
 
@@ -1080,9 +1209,9 @@ input[type=range] { flex:1; height:4px; accent-color:var(--green-soft); cursor:p
         <div>Captured frame appears here</div>
       </div>
       <div class="canvas-top-btns">
-        <div class="icon-btn" title="Undo" onclick="undoMark()">↩</div>
-        <div class="icon-btn" title="Clear marks" onclick="clearMarks()">⊘</div>
-        <div class="icon-btn" title="Discard" onclick="discardFrame()">✕</div>
+        <div class="icon-btn undo-btn" title="Undo last mark" onclick="undoMark()">↩ Undo</div>
+        <div class="icon-btn" title="Clear all marks" onclick="clearMarks()">⊘</div>
+        <div class="icon-btn" title="Discard frame" onclick="discardFrame()">✕</div>
       </div>
       <div class="capture-flash" id="capture-flash"></div>
     </div>
@@ -1108,11 +1237,35 @@ input[type=range] { flex:1; height:4px; accent-color:var(--green-soft); cursor:p
       <div class="card-label">📐 Perspective Mode</div>
       <div class="view-mode-bar">
         <div class="view-mode-pill active" id="vmp-player" onclick="setViewMode('player')">
-          <span class="vmp-icon">🎮</span>
+          <span class="vmp-icon">
+            <!-- Cue stick at playing angle -->
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <line x1="2" y1="20" x2="18" y2="4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <circle cx="19" cy="3" r="2" fill="currentColor" opacity=".6"/>
+              <circle cx="7" cy="16" r="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+              <circle cx="7" cy="16" r="1" fill="currentColor"/>
+            </svg>
+          </span>
           <span class="vmp-label">Player View</span>
         </div>
         <div class="view-mode-pill" id="vmp-overhead" onclick="setViewMode('overhead')">
-          <span class="vmp-icon">🛸</span>
+          <span class="vmp-icon">
+            <!-- Pool table from above -->
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="2" y="4" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/>
+              <rect x="4" y="6" width="14" height="10" rx="1" stroke="currentColor" stroke-width="1" fill="none" opacity=".5"/>
+              <!-- Corner pockets -->
+              <circle cx="4" cy="6" r="1.2" fill="currentColor" opacity=".8"/>
+              <circle cx="18" cy="6" r="1.2" fill="currentColor" opacity=".8"/>
+              <circle cx="4" cy="16" r="1.2" fill="currentColor" opacity=".8"/>
+              <circle cx="18" cy="16" r="1.2" fill="currentColor" opacity=".8"/>
+              <!-- Side pockets -->
+              <circle cx="11" cy="4" r="1.2" fill="currentColor" opacity=".8"/>
+              <circle cx="11" cy="18" r="1.2" fill="currentColor" opacity=".8"/>
+              <!-- Ball -->
+              <circle cx="11" cy="11" r="2" fill="currentColor" opacity=".6"/>
+            </svg>
+          </span>
           <span class="vmp-label">Overhead View</span>
         </div>
       </div>
@@ -1357,7 +1510,7 @@ async function runDetection() {
       const ballPreds = preds.filter(p =>
         ['sports ball','frisbee','orange','apple'].includes(p.class) && p.score > CONF_THRESHOLD
       );
-      // Scale bbox back to original canvas size
+      // COCO bbox is in inferCanvas coords (640x640), scale to main canvas
       const scaleX = canvas.width / 640, scaleY = canvas.height / 640;
       detections = ballPreds.map(p => ({
         class: 1,
@@ -1365,13 +1518,13 @@ async function runDetection() {
         bbox: [p.bbox[0]*scaleX, p.bbox[1]*scaleY, p.bbox[2]*scaleX, p.bbox[3]*scaleY]
       }));
     } else {
-      // Custom YOLOv8 TF.js model — pass the 640x640 canvas
+      // Custom YOLOv8 — returns bboxFrac (0-1 fractions), scale to main canvas
+      const W = canvas.width, H = canvas.height;
       const rawDets = await runYOLOInference(inferCanvas);
-      // Scale bbox back to original canvas size
-      const scaleX = canvas.width / 640, scaleY = canvas.height / 640;
       detections = rawDets.map(d => ({
-        ...d,
-        bbox: [d.bbox[0]*scaleX, d.bbox[1]*scaleY, d.bbox[2]*scaleX, d.bbox[3]*scaleY]
+        class: d.class,
+        score: d.score,
+        bbox: [d.bboxFrac[0]*W, d.bboxFrac[1]*H, d.bboxFrac[2]*W, d.bboxFrac[3]*H]
       }));
     }
 
@@ -1459,12 +1612,17 @@ function reDetect() {
 }
 
 async function runYOLOInference(canvasEl) {
-  const inputTensor = tf.tidy(() => {
-    const img = tf.browser.fromPixels(canvasEl);
-    const resized = tf.image.resizeBilinear(img, [640, 640]);
-    const normalized = resized.div(255.0);
-    return normalized.expandDims(0);
-  });
+  // canvasEl is already 640x640 — output bbox as fractions (0-1) for caller to scale
+  let inputTensor;
+  try {
+    inputTensor = tf.tidy(() => {
+      const img = tf.browser.fromPixels(canvasEl);
+      const normalized = img.div(255.0);
+      return normalized.expandDims(0);
+    });
+  } catch(e) {
+    throw new Error('tensor_create_failed: ' + e.message);
+  }
 
   const output = await tfModel.executeAsync(inputTensor);
   inputTensor.dispose();
@@ -1473,22 +1631,20 @@ async function runYOLOInference(canvasEl) {
   const data = await output[0].data();
   output.forEach(t => t.dispose());
 
-  const W = canvasEl.width, H = canvasEl.height;
   const detections = [];
   const numBoxes = 8400;
   const numClasses = 5;
 
   for (let i = 0; i < numBoxes; i++) {
-    // Find best class
     let bestScore = 0, bestClass = 0;
     for (let c = 0; c < numClasses; c++) {
       const score = data[(4 + c) * numBoxes + i];
       if (score > bestScore) { bestScore = score; bestClass = c; }
     }
-
     if (bestScore < CONF_THRESHOLD) continue;
 
     // YOLOv8 outputs cx,cy,w,h normalized to input size (640)
+    // Return as fractions (0-1) so caller can scale to any canvas size
     const cx = data[0 * numBoxes + i] / 640;
     const cy = data[1 * numBoxes + i] / 640;
     const bw = data[2 * numBoxes + i] / 640;
@@ -1497,11 +1653,11 @@ async function runYOLOInference(canvasEl) {
     detections.push({
       class: bestClass,
       score: bestScore,
-      bbox: [(cx - bw/2) * W, (cy - bh/2) * H, bw * W, bh * H]
+      // bbox as fractions — caller multiplies by actual W/H
+      bboxFrac: [cx - bw/2, cy - bh/2, bw, bh]
     });
   }
 
-  // Simple NMS
   return applyNMS(detections);
 }
 
@@ -1513,7 +1669,7 @@ function applyNMS(dets) {
     if (suppressed.has(i)) continue;
     kept.push(dets[i]);
     for (let j = i+1; j < dets.length; j++) {
-      if (iou(dets[i].bbox, dets[j].bbox) > NMS_THRESHOLD) suppressed.add(j);
+      if (iou(dets[i].bboxFrac, dets[j].bboxFrac) > NMS_THRESHOLD) suppressed.add(j);
     }
   }
   return kept;
@@ -2003,6 +2159,8 @@ function renderCanvas() {
     });
   }
 
+  // ── AIMING AIDS ──
+  drawAimingAids(ctx, cue, objs, pkt, R, W, H);
 
   // ── CUE BALL PATH AFTER CONTACT (Spin Physics) ──
   // Only shown in Overhead View — perspective distortion makes it wrong in Player View
@@ -2196,6 +2354,235 @@ function getPocketType(pocket) {
 function dist(a,b) { return Math.hypot(a.fx-b.fx, a.fy-b.fy); }
 function closestTo(origin, pool) { return pool.reduce((best,b)=>dist(origin,b)<dist(origin,best)?b:best,pool[0]); }
 function rangeWord(d) { return d<.22?'close-range':d<.5?'mid-range':'long-range'; }
+
+/* ═══════════════════════════════════════════
+   AIMING AIDS
+═══════════════════════════════════════════ */
+function aimToggle(id) {
+  var el = document.getElementById(id);
+  return el && el.checked;
+}
+
+function drawAimingAids(ctx, cue, objs, pkt, R, W, H) {
+  if (!cue || objs.length === 0) return;
+
+  const cx = cue.fx * W, cy = cue.fy * H;
+  const obj = objs[0];
+  const ox = obj.fx * W, oy = obj.fy * H;
+  const px = pkt ? pkt.fx * W : null;
+  const py = pkt ? pkt.fy * H : null;
+
+  // Shot direction vector (cue → object ball)
+  const shotDx = ox - cx, shotDy = oy - cy;
+  const shotDist = Math.hypot(shotDx, shotDy);
+  const shotNx = shotDx / shotDist, shotNy = shotDy / shotDist; // normalized
+
+  // Contact point on object ball surface (where cue ball touches it)
+  // = center of object ball minus R*2 along shot direction
+  const contactX = ox - shotNx * R * 2;
+  const contactY = oy - shotNy * R * 2;
+
+  // Cut angle for shaft edge / DTD calculations
+  const cutAngle = (px !== null) ? (computeCutAngle(cue, obj, pkt) || 0) : null;
+
+  // ── 1. TARGET LINE ──
+  if (aimToggle('aim-targetline') && px !== null) {
+    ctx.save();
+    // Full aim line: from cue ball back through contact point to pocket
+    // Extended back behind cue ball
+    const backX = cx - shotNx * R * 4;
+    const backY = cy - shotNy * R * 4;
+    // Object ball → pocket line (yellow target line)
+    ctx.beginPath();
+    ctx.moveTo(backX, backY);
+    ctx.lineTo(contactX, contactY);
+    ctx.strokeStyle = 'rgba(255, 220, 0, 0.85)';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([]);
+    ctx.shadowColor = 'rgba(255, 220, 0, 0.5)';
+    ctx.shadowBlur = 8;
+    ctx.stroke();
+
+    // Pocket direction line (from object ball to pocket)
+    if (pkt) {
+      const toPktDx = px - ox, toPktDy = py - oy;
+      const toPktDist = Math.hypot(toPktDx, toPktDy);
+      const toPktNx = toPktDx / toPktDist, toPktNy = toPktDy / toPktDist;
+      ctx.beginPath();
+      ctx.moveTo(ox + toPktNx * R, oy + toPktNy * R); // start from ball edge
+      ctx.lineTo(px, py);
+      ctx.strokeStyle = 'rgba(255, 220, 0, 0.7)';
+      ctx.lineWidth = 1.8;
+      ctx.setLineDash([6, 4]);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  // ── 2. CONTACT POINT CROSSHAIR ──
+  if (aimToggle('aim-contactpoint')) {
+    ctx.save();
+    const cr = R * 0.55;
+    // Outer ring
+    ctx.beginPath();
+    ctx.arc(contactX, contactY, cr, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(255, 80, 80, 0.9)';
+    ctx.lineWidth = 1.8;
+    ctx.setLineDash([]);
+    ctx.shadowColor = 'rgba(255, 80, 80, 0.6)';
+    ctx.shadowBlur = 8;
+    ctx.stroke();
+
+    // Inner dot
+    ctx.beginPath();
+    ctx.arc(contactX, contactY, cr * 0.25, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255, 80, 80, 0.95)';
+    ctx.fill();
+
+    // Crosshair lines
+    const arm = cr * 1.5;
+    ctx.beginPath();
+    ctx.moveTo(contactX - arm, contactY);
+    ctx.lineTo(contactX + arm, contactY);
+    ctx.moveTo(contactX, contactY - arm);
+    ctx.lineTo(contactX, contactY + arm);
+    ctx.strokeStyle = 'rgba(255, 80, 80, 0.75)';
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  // ── 3. SHAFT EDGE GUIDE ──
+  if (aimToggle('aim-shaftedge') && cutAngle !== null) {
+    ctx.save();
+    // Shaft width approximation — about 1.5x ball radius visually
+    const shaftW = R * 0.6;
+    // Perpendicular to shot direction
+    const perpX = -shotNy, perpY = shotNx;
+
+    // For cuts ≤ 13°: edge of shaft points AT contact point
+    // For cuts > 13°: edge points OUTSIDE contact point
+    // For cuts < 13° (very straight): edge points INSIDE
+    let edgeOffset = 0;
+    if (cutAngle <= 13) {
+      edgeOffset = shaftW * 0.5; // edge inside
+    } else {
+      edgeOffset = -shaftW * 0.5; // edge outside
+    }
+
+    // Draw shaft rectangle behind cue ball
+    const shaftLen = shotDist * 0.6;
+    const shaftStartX = cx - shotNx * shaftLen;
+    const shaftStartY = cy - shotNy * shaftLen;
+    const edgeShiftX = perpX * edgeOffset;
+    const edgeShiftY = perpY * edgeOffset;
+
+    // Draw two shaft edge lines
+    const e1x = edgeShiftX + perpX * shaftW / 2;
+    const e1y = edgeShiftY + perpY * shaftW / 2;
+    const e2x = edgeShiftX - perpX * shaftW / 2;
+    const e2y = edgeShiftY - perpY * shaftW / 2;
+
+    // Shaft fill
+    ctx.beginPath();
+    ctx.moveTo(shaftStartX + e1x, shaftStartY + e1y);
+    ctx.lineTo(cx + e1x, cy + e1y);
+    ctx.lineTo(cx + e2x, cy + e2y);
+    ctx.lineTo(shaftStartX + e2x, shaftStartY + e2y);
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(205, 160, 80, 0.2)';
+    ctx.strokeStyle = 'rgba(205, 160, 80, 0.7)';
+    ctx.lineWidth = 1.2;
+    ctx.setLineDash([]);
+    ctx.fill();
+    ctx.stroke();
+
+    // Highlight the active edge (the one that points at contact)
+    const activeEdgeX = cx + (cutAngle <= 13 ? e1x : e2x);
+    const activeEdgeY = cy + (cutAngle <= 13 ? e1y : e2y);
+    const startEdgeX = shaftStartX + (cutAngle <= 13 ? e1x : e2x);
+    const startEdgeY = shaftStartY + (cutAngle <= 13 ? e1y : e2y);
+    ctx.beginPath();
+    ctx.moveTo(startEdgeX, startEdgeY);
+    ctx.lineTo(activeEdgeX, activeEdgeY);
+    ctx.strokeStyle = 'rgba(100, 180, 255, 0.95)';
+    ctx.lineWidth = 2.5;
+    ctx.shadowColor = 'rgba(100, 180, 255, 0.6)';
+    ctx.shadowBlur = 8;
+    ctx.stroke();
+
+    // Label
+    const labelText = cutAngle <= 13 ? 'Edge → Contact' : cutAngle > 13 ? 'Edge Outside' : 'Edge Inside';
+    ctx.font = `bold ${Math.round(R * 0.7)}px Barlow Condensed, sans-serif`;
+    ctx.fillStyle = 'rgba(100, 180, 255, 0.9)';
+    ctx.shadowBlur = 0;
+    ctx.textAlign = 'center';
+    ctx.fillText(labelText, (shaftStartX + cx) / 2 + perpX * shaftW * 2, (shaftStartY + cy) / 2 + perpY * shaftW * 2);
+    ctx.restore();
+  }
+
+  // ── 4. DOUBLE-THE-DISTANCE (DTD) ──
+  if (aimToggle('aim-dtd') && cutAngle !== null && px !== null) {
+    ctx.save();
+
+    // Contact point vector from object ball center
+    const cpDx = contactX - ox, cpDy = contactY - oy;
+    const cpDist = Math.hypot(cpDx, cpDy);
+
+    let dtdX, dtdY;
+    if (cutAngle <= 45) {
+      // Up to half ball: DTD from OB CENTER to contact point, doubled
+      dtdX = ox + cpDx * 2;
+      dtdY = oy + cpDy * 2;
+    } else {
+      // Thinner than half ball: DTD from OB EDGE to contact point, doubled
+      const edgeX = ox + (cpDx / cpDist) * R;
+      const edgeY = oy + (cpDy / cpDist) * R;
+      dtdX = edgeX + (contactX - edgeX) * 2;
+      dtdY = edgeY + (contactY - edgeY) * 2;
+    }
+
+    // Draw DTD aim point marker
+    const dtdR = R * 0.7;
+    ctx.beginPath();
+    ctx.arc(dtdX, dtdY, dtdR, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(45, 255, 138, 0.9)';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([]);
+    ctx.shadowColor = 'rgba(45, 255, 138, 0.5)';
+    ctx.shadowBlur = 10;
+    ctx.stroke();
+
+    // Inner plus
+    ctx.beginPath();
+    ctx.moveTo(dtdX - dtdR * 0.5, dtdY);
+    ctx.lineTo(dtdX + dtdR * 0.5, dtdY);
+    ctx.moveTo(dtdX, dtdY - dtdR * 0.5);
+    ctx.lineTo(dtdX, dtdY + dtdR * 0.5);
+    ctx.strokeStyle = 'rgba(45, 255, 138, 0.9)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Line from cue ball center to DTD point
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(dtdX, dtdY);
+    ctx.strokeStyle = 'rgba(45, 255, 138, 0.4)';
+    ctx.lineWidth = 1.2;
+    ctx.setLineDash([4, 4]);
+    ctx.shadowBlur = 0;
+    ctx.stroke();
+
+    // DTD label
+    const dtdLabel = cutAngle <= 45 ? 'DTD Aim Point' : 'DTD (thin cut)';
+    ctx.font = `bold ${Math.round(R * 0.7)}px Barlow Condensed, sans-serif`;
+    ctx.fillStyle = 'rgba(45, 255, 138, 0.9)';
+    ctx.textAlign = 'center';
+    ctx.setLineDash([]);
+    ctx.fillText(dtdLabel, dtdX, dtdY - dtdR - 4);
+    ctx.restore();
+  }
+}
 
 /* ═══════════════════════════════════════════
    SHOT SUGGESTION
@@ -2802,7 +3189,11 @@ function saveSettings() {
       coaching:  document.getElementById('coaching-toggle').checked,
       gameMode:  gameMode,
       viewMode:  viewMode,
-      spin:      currentEnglish
+      spin:      currentEnglish,
+      aimTarget: document.getElementById('aim-targetline').checked,
+      aimContact:document.getElementById('aim-contactpoint').checked,
+      aimShaft:  document.getElementById('aim-shaftedge').checked,
+      aimDtd:    document.getElementById('aim-dtd').checked
     }));
   } catch(e) {}
 }
@@ -2830,6 +3221,10 @@ function loadSettings() {
     }
     if (s.viewMode) { viewMode = s.viewMode; setViewMode(s.viewMode); }
     if (s.spin) { currentEnglish = s.spin; }
+    if (s.aimTarget  !== undefined) document.getElementById('aim-targetline').checked   = s.aimTarget;
+    if (s.aimContact !== undefined) document.getElementById('aim-contactpoint').checked = s.aimContact;
+    if (s.aimShaft   !== undefined) document.getElementById('aim-shaftedge').checked    = s.aimShaft;
+    if (s.aimDtd     !== undefined) document.getElementById('aim-dtd').checked          = s.aimDtd;
   } catch(e) {}
 }
 
@@ -2871,14 +3266,70 @@ function saveToHistory(title, difficulty, cutAngle, gameModeName) {
   } catch(e) {}
 }
 
+var _historyRestoreEntry = null;
+
+function openHistoryRestore(entryId) {
+  var entry = shotHistory.find(function(e) { return e.id === entryId; });
+  if (!entry) return;
+  _historyRestoreEntry = entry;
+  document.getElementById('history-restore-thumb').src = entry.thumb;
+  document.getElementById('history-restore-title').textContent = entry.title;
+  var diffColor = entry.difficulty <= 3 ? '#3ddd7a' : entry.difficulty <= 6 ? '#e08820' : '#cc2222';
+  document.getElementById('history-restore-meta').innerHTML =
+    entry.game + ' &middot; ' +
+    (entry.cutAngle ? entry.cutAngle + '° cut &middot; ' : '') +
+    entry.time + ' &middot; <span style="color:' + diffColor + ';font-weight:700">' + entry.difficulty + '/10</span>';
+  document.getElementById('history-restore-overlay').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeHistoryRestore() {
+  document.getElementById('history-restore-overlay').classList.remove('show');
+  document.body.style.overflow = '';
+  _historyRestoreEntry = null;
+}
+
+function closeHistoryRestoreOnOverlay(e) {
+  if (e.target === document.getElementById('history-restore-overlay')) closeHistoryRestore();
+}
+
+function confirmHistoryRestore() {
+  if (!_historyRestoreEntry) return;
+  var entry = _historyRestoreEntry;
+  closeHistoryRestore();
+
+  // Load the thumbnail image back onto the canvas
+  var img = new Image();
+  img.onload = function() {
+    sourceImg = img;
+    marks = [];
+    canvas.width = img.naturalWidth || img.width;
+    canvas.height = img.naturalHeight || img.height;
+    renderCanvas();
+    placeholder.style.display = 'none';
+    canvas.style.display = 'block';
+    hideSuggestion();
+    document.getElementById('detections-box').classList.remove('show');
+    document.getElementById('redetect-btn').style.display = 'none';
+    if (document.getElementById('english-toggle').checked) {
+      document.getElementById('english-panel').style.display = '';
+    }
+    setTimeout(function() {
+      document.getElementById('canvas-card').scrollIntoView({behavior:'smooth', block:'start'});
+    }, 120);
+    setStatus('📸 Shot restored from history — re-mark balls and suggest again', 'gold');
+  };
+  img.src = entry.thumb;
+}
+
 function renderHistory() {
   var list = document.getElementById('history-list');
   var panel = document.getElementById('history-panel');
   if (!list || !shotHistory.length) { if (panel) panel.style.display = 'none'; return; }
   panel.style.display = '';
   list.innerHTML = shotHistory.map(function(e) {
-    var diffColor = e.difficulty <= 3 ? '#34c96a' : e.difficulty <= 6 ? '#e08820' : '#cc2222';
-    return '<div class="history-item">' +
+    var diffColor = e.difficulty <= 3 ? '#3ddd7a' : e.difficulty <= 6 ? '#e08820' : '#cc2222';
+    return '<div class="history-item" onclick="openHistoryRestore(' + e.id + ')" style="cursor:pointer">' +
       '<img class="history-thumb" src="' + e.thumb + '" alt="shot"/>' +
       '<div class="history-info">' +
         '<div class="history-title">' + e.title + '</div>' +
@@ -2953,6 +3404,20 @@ try {
   document.getElementById('model-msg').textContent = 'Init error: ' + e.message;
 }
 </script>
+<!-- HISTORY RESTORE POPUP -->
+<div class="history-restore-overlay" id="history-restore-overlay" onclick="closeHistoryRestoreOnOverlay(event)">
+  <div class="history-restore-popup">
+    <img class="history-restore-thumb" id="history-restore-thumb" src="" alt="shot"/>
+    <div class="history-restore-title" id="history-restore-title"></div>
+    <div class="history-restore-meta" id="history-restore-meta"></div>
+    <div class="history-restore-question">Load this shot's image back onto the canvas?</div>
+    <div class="history-restore-btns">
+      <button class="history-restore-yes" onclick="confirmHistoryRestore()">&#10003; Yes, Load It</button>
+      <button class="history-restore-no" onclick="closeHistoryRestore()">Cancel</button>
+    </div>
+  </div>
+</div>
+
 <!-- SPIN POPUP -->
 <div class="spin-popup-overlay" id="spin-popup-overlay" onclick="closeSpinPopupOnOverlay(event)">
   <div class="spin-popup" id="spin-popup">
