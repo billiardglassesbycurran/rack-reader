@@ -1155,49 +1155,51 @@ input[type=range] { flex:1; height:4px; accent-color:var(--green-soft); cursor:p
       </div>
       <div class="div"></div>
       <!-- AIMING AIDS -->
-      <div class="card-label" style="margin-top:4px">🎯 Aiming Aids</div>
-      <div class="autoscan-row">
-        <div>
-          <div class="autoscan-label">🟡 Target Line</div>
-          <div class="autoscan-desc">Aim line from cue tip through contact point to pocket</div>
+      <div style="background:rgba(45,255,138,0.04);border:1px solid rgba(45,255,138,0.12);border-radius:8px;padding:10px 12px;margin-top:4px">
+        <div class="card-label" style="color:var(--green-soft);margin-bottom:8px">🎯 Aiming Aids</div>
+        <div class="autoscan-row">
+          <div>
+            <div class="autoscan-label" style="color:#ffdc00">🟡 Target Line</div>
+            <div class="autoscan-desc">Aim line from cue tip through contact point to pocket</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="aim-targetline" checked onchange="renderCanvas()">
+            <div class="toggle-track"></div>
+          </label>
         </div>
-        <label class="toggle">
-          <input type="checkbox" id="aim-targetline" checked onchange="renderCanvas()">
-          <div class="toggle-track"></div>
-        </label>
-      </div>
-      <div class="div"></div>
-      <div class="autoscan-row">
-        <div>
-          <div class="autoscan-label">🎱 Contact Point</div>
-          <div class="autoscan-desc">Crosshair on the exact hit point of the object ball</div>
+        <div class="div"></div>
+        <div class="autoscan-row">
+          <div>
+            <div class="autoscan-label" style="color:#ff4444">⊕ Contact Point</div>
+            <div class="autoscan-desc">Red crosshair on the exact hit point of the object ball</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="aim-contactpoint" checked onchange="renderCanvas()">
+            <div class="toggle-track"></div>
+          </label>
         </div>
-        <label class="toggle">
-          <input type="checkbox" id="aim-contactpoint" checked onchange="renderCanvas()">
-          <div class="toggle-track"></div>
-        </label>
-      </div>
-      <div class="div"></div>
-      <div class="autoscan-row">
-        <div>
-          <div class="autoscan-label">🔵 Shaft Edge Guide</div>
-          <div class="autoscan-desc">Shows which cue shaft edge to align for the cut angle</div>
+        <div class="div"></div>
+        <div class="autoscan-row">
+          <div>
+            <div class="autoscan-label" style="color:#50b4ff">◈ Shaft Edge Guide</div>
+            <div class="autoscan-desc">Shows which cue shaft edge aligns to the contact point</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="aim-shaftedge" onchange="renderCanvas()">
+            <div class="toggle-track"></div>
+          </label>
         </div>
-        <label class="toggle">
-          <input type="checkbox" id="aim-shaftedge" onchange="renderCanvas()">
-          <div class="toggle-track"></div>
-        </label>
-      </div>
-      <div class="div"></div>
-      <div class="autoscan-row">
-        <div>
-          <div class="autoscan-label">📐 Double-the-Distance</div>
-          <div class="autoscan-desc">DTD aim point marker for precise cut angle targeting</div>
+        <div class="div"></div>
+        <div class="autoscan-row">
+          <div>
+            <div class="autoscan-label" style="color:#2dff8a">✚ Double-the-Distance</div>
+            <div class="autoscan-desc">DTD aim point — double the contact distance for precision targeting</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="aim-dtd" onchange="renderCanvas()">
+            <div class="toggle-track"></div>
+          </label>
         </div>
-        <label class="toggle">
-          <input type="checkbox" id="aim-dtd" onchange="renderCanvas()">
-          <div class="toggle-track"></div>
-        </label>
       </div>
     </div>
 
@@ -1309,6 +1311,30 @@ input[type=range] { flex:1; height:4px; accent-color:var(--green-soft); cursor:p
             box-shadow: inset 0 2px 6px rgba(0,0,0,0.9), 0 0 8px rgba(200,151,46,0.3);
             flex-shrink:0;
           "></div>Target Pocket
+        </div>
+        <!-- Auto-place all 6 pockets -->
+        <div style="grid-column:span 4;margin-top:4px">
+          <button onclick="autoPlacePockets()" style="
+            width:100%;padding:8px;border-radius:7px;
+            background:rgba(200,151,46,0.12);
+            border:1px solid rgba(200,151,46,0.35);
+            color:var(--gold-bright);
+            font-family:'Barlow Condensed',sans-serif;
+            font-size:12px;font-weight:700;letter-spacing:.8px;
+            cursor:pointer;-webkit-tap-highlight-color:transparent;
+            display:flex;align-items:center;justify-content:center;gap:6px;
+          ">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <rect x="1" y="2" width="12" height="10" rx="1.5" stroke="currentColor" stroke-width="1.2" fill="none"/>
+              <circle cx="1" cy="2" r="1.5" fill="currentColor" opacity=".8"/>
+              <circle cx="13" cy="2" r="1.5" fill="currentColor" opacity=".8"/>
+              <circle cx="1" cy="12" r="1.5" fill="currentColor" opacity=".8"/>
+              <circle cx="13" cy="12" r="1.5" fill="currentColor" opacity=".8"/>
+              <circle cx="7" cy="2" r="1.5" fill="currentColor" opacity=".8"/>
+              <circle cx="7" cy="12" r="1.5" fill="currentColor" opacity=".8"/>
+            </svg>
+            AUTO-PLACE ALL 6 POCKETS
+          </button>
         </div>
       </div>
     </div>
@@ -2301,7 +2327,7 @@ function renderCanvas() {
       ctx.fillStyle=g; ctx.strokeStyle='#c07030';
     } else {
       ctx.fillStyle='rgba(200,151,46,.22)'; ctx.strokeStyle='#c8972e';
-      ctx.setLineDash([3,2]);
+      ctx.setLineDash(m.autoPlaced ? [2,2] : [3,2]);
     }
     ctx.lineWidth=2.5; ctx.fill(); ctx.stroke();
     ctx.shadowBlur=0; ctx.setLineDash([]);
@@ -2363,6 +2389,37 @@ function aimToggle(id) {
   return el && el.checked;
 }
 
+// Draw a label with a background box — compatible with all browsers (no roundRect)
+function drawLabel(ctx, text, x, y, color, fontSize) {
+  ctx.save();
+  ctx.font = `bold ${fontSize}px Barlow Condensed, sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  const metrics = ctx.measureText(text);
+  const pad = fontSize * 0.4;
+  const bw = metrics.width + pad * 2;
+  const bh = fontSize + pad;
+  const bx = x - bw / 2, by = y - bh / 2;
+  const r = 4;
+  // Manual rounded rect (no roundRect API needed)
+  ctx.fillStyle = 'rgba(0,0,0,0.65)';
+  ctx.beginPath();
+  ctx.moveTo(bx + r, by);
+  ctx.lineTo(bx + bw - r, by);
+  ctx.quadraticCurveTo(bx + bw, by, bx + bw, by + r);
+  ctx.lineTo(bx + bw, by + bh - r);
+  ctx.quadraticCurveTo(bx + bw, by + bh, bx + bw - r, by + bh);
+  ctx.lineTo(bx + r, by + bh);
+  ctx.quadraticCurveTo(bx, by + bh, bx, by + bh - r);
+  ctx.lineTo(bx, by + r);
+  ctx.quadraticCurveTo(bx, by, bx + r, by);
+  ctx.closePath();
+  ctx.fill();
+  ctx.fillStyle = color;
+  ctx.fillText(text, x, y);
+  ctx.restore();
+}
+
 function drawAimingAids(ctx, cue, objs, pkt, R, W, H) {
   if (!cue || objs.length === 0) return;
 
@@ -2372,49 +2429,51 @@ function drawAimingAids(ctx, cue, objs, pkt, R, W, H) {
   const px = pkt ? pkt.fx * W : null;
   const py = pkt ? pkt.fy * H : null;
 
-  // Shot direction vector (cue → object ball)
   const shotDx = ox - cx, shotDy = oy - cy;
   const shotDist = Math.hypot(shotDx, shotDy);
-  const shotNx = shotDx / shotDist, shotNy = shotDy / shotDist; // normalized
+  const shotNx = shotDx / shotDist, shotNy = shotDy / shotDist;
 
-  // Contact point on object ball surface (where cue ball touches it)
-  // = center of object ball minus R*2 along shot direction
+  // Contact point on object ball surface
   const contactX = ox - shotNx * R * 2;
   const contactY = oy - shotNy * R * 2;
 
-  // Cut angle for shaft edge / DTD calculations
   const cutAngle = (px !== null) ? (computeCutAngle(cue, obj, pkt) || 0) : null;
+  const lbl = Math.max(10, Math.round(R * 0.75)); // label font size
 
   // ── 1. TARGET LINE ──
-  if (aimToggle('aim-targetline') && px !== null) {
+  if (aimToggle('aim-targetline')) {
     ctx.save();
-    // Full aim line: from cue ball back through contact point to pocket
-    // Extended back behind cue ball
-    const backX = cx - shotNx * R * 4;
-    const backY = cy - shotNy * R * 4;
-    // Object ball → pocket line (yellow target line)
+    // Extend line back behind cue ball
+    const backX = cx - shotNx * shotDist * 0.5;
+    const backY = cy - shotNy * shotDist * 0.5;
+
+    // Cue → contact point (solid yellow)
     ctx.beginPath();
     ctx.moveTo(backX, backY);
     ctx.lineTo(contactX, contactY);
-    ctx.strokeStyle = 'rgba(255, 220, 0, 0.85)';
-    ctx.lineWidth = 2;
+    ctx.strokeStyle = 'rgba(255, 220, 0, 0.95)';
+    ctx.lineWidth = 2.5;
     ctx.setLineDash([]);
-    ctx.shadowColor = 'rgba(255, 220, 0, 0.5)';
-    ctx.shadowBlur = 8;
+    ctx.shadowColor = 'rgba(255, 220, 0, 0.6)';
+    ctx.shadowBlur = 10;
     ctx.stroke();
 
-    // Pocket direction line (from object ball to pocket)
+    // Object ball → pocket (dashed yellow)
     if (pkt) {
       const toPktDx = px - ox, toPktDy = py - oy;
       const toPktDist = Math.hypot(toPktDx, toPktDy);
       const toPktNx = toPktDx / toPktDist, toPktNy = toPktDy / toPktDist;
       ctx.beginPath();
-      ctx.moveTo(ox + toPktNx * R, oy + toPktNy * R); // start from ball edge
+      ctx.moveTo(ox + toPktNx * R * 1.1, oy + toPktNy * R * 1.1);
       ctx.lineTo(px, py);
-      ctx.strokeStyle = 'rgba(255, 220, 0, 0.7)';
-      ctx.lineWidth = 1.8;
-      ctx.setLineDash([6, 4]);
+      ctx.strokeStyle = 'rgba(255, 220, 0, 0.8)';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([8, 5]);
       ctx.stroke();
+      // "TARGET LINE" label at midpoint
+      const midX = (ox + px) / 2, midY = (oy + py) / 2;
+      ctx.shadowBlur = 0;
+      drawLabel(ctx, 'TARGET LINE', midX, midY - lbl * 1.2, '#ffdc00', lbl);
     }
     ctx.restore();
   }
@@ -2422,66 +2481,52 @@ function drawAimingAids(ctx, cue, objs, pkt, R, W, H) {
   // ── 2. CONTACT POINT CROSSHAIR ──
   if (aimToggle('aim-contactpoint')) {
     ctx.save();
-    const cr = R * 0.55;
+    const cr = R * 0.6;
     // Outer ring
     ctx.beginPath();
     ctx.arc(contactX, contactY, cr, 0, Math.PI * 2);
-    ctx.strokeStyle = 'rgba(255, 80, 80, 0.9)';
-    ctx.lineWidth = 1.8;
+    ctx.strokeStyle = 'rgba(255, 60, 60, 0.95)';
+    ctx.lineWidth = 2.2;
     ctx.setLineDash([]);
-    ctx.shadowColor = 'rgba(255, 80, 80, 0.6)';
-    ctx.shadowBlur = 8;
+    ctx.shadowColor = 'rgba(255, 60, 60, 0.7)';
+    ctx.shadowBlur = 10;
     ctx.stroke();
-
     // Inner dot
     ctx.beginPath();
-    ctx.arc(contactX, contactY, cr * 0.25, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(255, 80, 80, 0.95)';
+    ctx.arc(contactX, contactY, cr * 0.22, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255, 60, 60, 0.95)';
     ctx.fill();
-
-    // Crosshair lines
-    const arm = cr * 1.5;
+    // Crosshair arms
+    const arm = cr * 1.6;
     ctx.beginPath();
     ctx.moveTo(contactX - arm, contactY);
     ctx.lineTo(contactX + arm, contactY);
     ctx.moveTo(contactX, contactY - arm);
     ctx.lineTo(contactX, contactY + arm);
-    ctx.strokeStyle = 'rgba(255, 80, 80, 0.75)';
-    ctx.lineWidth = 1.2;
+    ctx.strokeStyle = 'rgba(255, 60, 60, 0.8)';
+    ctx.lineWidth = 1.5;
+    ctx.shadowBlur = 6;
     ctx.stroke();
+    ctx.shadowBlur = 0;
+    drawLabel(ctx, 'CONTACT', contactX, contactY + cr + lbl, '#ff4444', lbl);
     ctx.restore();
   }
 
   // ── 3. SHAFT EDGE GUIDE ──
   if (aimToggle('aim-shaftedge') && cutAngle !== null) {
     ctx.save();
-    // Shaft width approximation — about 1.5x ball radius visually
-    const shaftW = R * 0.6;
-    // Perpendicular to shot direction
+    const shaftW = R * 0.65;
     const perpX = -shotNy, perpY = shotNx;
-
-    // For cuts ≤ 13°: edge of shaft points AT contact point
-    // For cuts > 13°: edge points OUTSIDE contact point
-    // For cuts < 13° (very straight): edge points INSIDE
-    let edgeOffset = 0;
-    if (cutAngle <= 13) {
-      edgeOffset = shaftW * 0.5; // edge inside
-    } else {
-      edgeOffset = -shaftW * 0.5; // edge outside
-    }
-
-    // Draw shaft rectangle behind cue ball
-    const shaftLen = shotDist * 0.6;
+    const shaftLen = Math.min(shotDist * 0.7, W * 0.4);
     const shaftStartX = cx - shotNx * shaftLen;
     const shaftStartY = cy - shotNy * shaftLen;
-    const edgeShiftX = perpX * edgeOffset;
-    const edgeShiftY = perpY * edgeOffset;
 
-    // Draw two shaft edge lines
-    const e1x = edgeShiftX + perpX * shaftW / 2;
-    const e1y = edgeShiftY + perpY * shaftW / 2;
-    const e2x = edgeShiftX - perpX * shaftW / 2;
-    const e2y = edgeShiftY - perpY * shaftW / 2;
+    // Determine which edge is the active aiming edge
+    // ≤13°: edge AT contact → use near edge
+    // >13°: edge OUTSIDE contact → use far edge
+    const side = cutAngle <= 13 ? 1 : -1;
+    const e1x = perpX * shaftW / 2, e1y = perpY * shaftW / 2;
+    const e2x = -perpX * shaftW / 2, e2y = -perpY * shaftW / 2;
 
     // Shaft fill
     ctx.beginPath();
@@ -2490,42 +2535,45 @@ function drawAimingAids(ctx, cue, objs, pkt, R, W, H) {
     ctx.lineTo(cx + e2x, cy + e2y);
     ctx.lineTo(shaftStartX + e2x, shaftStartY + e2y);
     ctx.closePath();
-    ctx.fillStyle = 'rgba(205, 160, 80, 0.2)';
-    ctx.strokeStyle = 'rgba(205, 160, 80, 0.7)';
-    ctx.lineWidth = 1.2;
-    ctx.setLineDash([]);
+    ctx.fillStyle = 'rgba(200, 155, 70, 0.18)';
     ctx.fill();
+    ctx.strokeStyle = 'rgba(200, 155, 70, 0.5)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([]);
     ctx.stroke();
 
-    // Highlight the active edge (the one that points at contact)
-    const activeEdgeX = cx + (cutAngle <= 13 ? e1x : e2x);
-    const activeEdgeY = cy + (cutAngle <= 13 ? e1y : e2y);
-    const startEdgeX = shaftStartX + (cutAngle <= 13 ? e1x : e2x);
-    const startEdgeY = shaftStartY + (cutAngle <= 13 ? e1y : e2y);
+    // Highlight active edge in blue
+    const activeEx = side === 1 ? e1x : e2x, activeEy = side === 1 ? e1y : e2y;
     ctx.beginPath();
-    ctx.moveTo(startEdgeX, startEdgeY);
-    ctx.lineTo(activeEdgeX, activeEdgeY);
-    ctx.strokeStyle = 'rgba(100, 180, 255, 0.95)';
-    ctx.lineWidth = 2.5;
-    ctx.shadowColor = 'rgba(100, 180, 255, 0.6)';
-    ctx.shadowBlur = 8;
+    ctx.moveTo(shaftStartX + activeEx, shaftStartY + activeEy);
+    ctx.lineTo(cx + activeEx, cy + activeEy);
+    ctx.strokeStyle = 'rgba(80, 180, 255, 0.95)';
+    ctx.lineWidth = 3;
+    ctx.shadowColor = 'rgba(80, 180, 255, 0.7)';
+    ctx.shadowBlur = 10;
+    ctx.stroke();
+
+    // Dashed line from active edge tip to contact point
+    ctx.beginPath();
+    ctx.moveTo(cx + activeEx, cy + activeEy);
+    ctx.lineTo(contactX, contactY);
+    ctx.strokeStyle = 'rgba(80, 180, 255, 0.6)';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([4, 4]);
+    ctx.shadowBlur = 0;
     ctx.stroke();
 
     // Label
-    const labelText = cutAngle <= 13 ? 'Edge → Contact' : cutAngle > 13 ? 'Edge Outside' : 'Edge Inside';
-    ctx.font = `bold ${Math.round(R * 0.7)}px Barlow Condensed, sans-serif`;
-    ctx.fillStyle = 'rgba(100, 180, 255, 0.9)';
-    ctx.shadowBlur = 0;
-    ctx.textAlign = 'center';
-    ctx.fillText(labelText, (shaftStartX + cx) / 2 + perpX * shaftW * 2, (shaftStartY + cy) / 2 + perpY * shaftW * 2);
+    const edgeLabel = cutAngle <= 13 ? 'EDGE → CONTACT' : cutAngle > 45 ? 'EDGE OUTSIDE' : 'EDGE OUTSIDE';
+    const midShaftX = (shaftStartX + cx) / 2 + activeEx + perpX * shaftW;
+    const midShaftY = (shaftStartY + cy) / 2 + activeEy + perpY * shaftW;
+    drawLabel(ctx, edgeLabel, midShaftX, midShaftY, '#50b4ff', lbl);
     ctx.restore();
   }
 
   // ── 4. DOUBLE-THE-DISTANCE (DTD) ──
   if (aimToggle('aim-dtd') && cutAngle !== null && px !== null) {
     ctx.save();
-
-    // Contact point vector from object ball center
     const cpDx = contactX - ox, cpDy = contactY - oy;
     const cpDist = Math.hypot(cpDx, cpDy);
 
@@ -2535,51 +2583,43 @@ function drawAimingAids(ctx, cue, objs, pkt, R, W, H) {
       dtdX = ox + cpDx * 2;
       dtdY = oy + cpDy * 2;
     } else {
-      // Thinner than half ball: DTD from OB EDGE to contact point, doubled
+      // Thinner: DTD from OB EDGE to contact point, doubled
       const edgeX = ox + (cpDx / cpDist) * R;
       const edgeY = oy + (cpDy / cpDist) * R;
       dtdX = edgeX + (contactX - edgeX) * 2;
       dtdY = edgeY + (contactY - edgeY) * 2;
     }
 
-    // Draw DTD aim point marker
-    const dtdR = R * 0.7;
-    ctx.beginPath();
-    ctx.arc(dtdX, dtdY, dtdR, 0, Math.PI * 2);
-    ctx.strokeStyle = 'rgba(45, 255, 138, 0.9)';
-    ctx.lineWidth = 2;
-    ctx.setLineDash([]);
-    ctx.shadowColor = 'rgba(45, 255, 138, 0.5)';
-    ctx.shadowBlur = 10;
-    ctx.stroke();
-
-    // Inner plus
-    ctx.beginPath();
-    ctx.moveTo(dtdX - dtdR * 0.5, dtdY);
-    ctx.lineTo(dtdX + dtdR * 0.5, dtdY);
-    ctx.moveTo(dtdX, dtdY - dtdR * 0.5);
-    ctx.lineTo(dtdX, dtdY + dtdR * 0.5);
-    ctx.strokeStyle = 'rgba(45, 255, 138, 0.9)';
-    ctx.lineWidth = 2;
-    ctx.stroke();
-
-    // Line from cue ball center to DTD point
+    // Dashed line from cue ball to DTD point
     ctx.beginPath();
     ctx.moveTo(cx, cy);
     ctx.lineTo(dtdX, dtdY);
-    ctx.strokeStyle = 'rgba(45, 255, 138, 0.4)';
-    ctx.lineWidth = 1.2;
-    ctx.setLineDash([4, 4]);
-    ctx.shadowBlur = 0;
+    ctx.strokeStyle = 'rgba(45, 255, 138, 0.45)';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([5, 4]);
     ctx.stroke();
 
-    // DTD label
-    const dtdLabel = cutAngle <= 45 ? 'DTD Aim Point' : 'DTD (thin cut)';
-    ctx.font = `bold ${Math.round(R * 0.7)}px Barlow Condensed, sans-serif`;
-    ctx.fillStyle = 'rgba(45, 255, 138, 0.9)';
-    ctx.textAlign = 'center';
+    // DTD marker circle with cross
+    const dtdR = R * 0.8;
+    ctx.beginPath();
+    ctx.arc(dtdX, dtdY, dtdR, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(45, 255, 138, 0.95)';
+    ctx.lineWidth = 2.5;
     ctx.setLineDash([]);
-    ctx.fillText(dtdLabel, dtdX, dtdY - dtdR - 4);
+    ctx.shadowColor = 'rgba(45, 255, 138, 0.6)';
+    ctx.shadowBlur = 12;
+    ctx.stroke();
+    // Inner cross
+    const arm = dtdR * 0.55;
+    ctx.beginPath();
+    ctx.moveTo(dtdX - arm, dtdY); ctx.lineTo(dtdX + arm, dtdY);
+    ctx.moveTo(dtdX, dtdY - arm); ctx.lineTo(dtdX, dtdY + arm);
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    const dtdLabel = cutAngle <= 45 ? 'DTD AIM POINT' : 'DTD THIN CUT';
+    drawLabel(ctx, dtdLabel, dtdX, dtdY - dtdR - lbl * 0.8, '#2dff8a', lbl);
     ctx.restore();
   }
 }
@@ -2587,6 +2627,329 @@ function drawAimingAids(ctx, cue, objs, pkt, R, W, H) {
 /* ═══════════════════════════════════════════
    SHOT SUGGESTION
 ═══════════════════════════════════════════ */
+
+// ── SMART DIFFICULTY SCORING ──
+function computeSmartDifficulty(cue, targetBall, pkt, cutAngle, cueToTarget, allMarks) {
+  if (!cue) return 5;
+  let score = 0;
+
+  // 1. Cut angle (0-40 pts) — steeper = harder
+  if (cutAngle !== null) {
+    score += (cutAngle / 90) * 40;
+  } else {
+    score += 15; // no pocket marked, assume moderate
+  }
+
+  // 2. Distance (0-20 pts)
+  if (cueToTarget !== null) {
+    score += cueToTarget * 20;
+  }
+
+  // 3. Rail proximity of cue ball (0-10 pts)
+  // Normalized coords — 0 and 1 are rails
+  const cueFx = cue.fx, cueFy = cue.fy;
+  const railDist = Math.min(cueFx, 1-cueFx, cueFy, 1-cueFy);
+  if (railDist < 0.08) score += 10; // very close to rail
+  else if (railDist < 0.15) score += 5;
+
+  // 4. Rail proximity of object ball (0-8 pts)
+  if (targetBall) {
+    const objRailDist = Math.min(targetBall.fx, 1-targetBall.fx, targetBall.fy, 1-targetBall.fy);
+    if (objRailDist < 0.06) score += 8; // ball near rail — harder to pocket cleanly
+    else if (objRailDist < 0.12) score += 3;
+  }
+
+  // 5. Cluster density near object ball (0-12 pts)
+  if (targetBall && allMarks) {
+    const nearby = allMarks.filter(m =>
+      m !== targetBall && m.type !== 'cue' && m.type !== 'pocket' &&
+      dist(targetBall, m) < 0.12
+    ).length;
+    score += Math.min(nearby * 4, 12);
+  }
+
+  // 6. English in use adds complexity (0-5 pts)
+  const toggle = document.getElementById('english-toggle');
+  if (toggle && toggle.checked && currentEnglish !== 'c' && currentEnglish !== 'stun') {
+    score += 5;
+  }
+
+  // 7. Long distance + steep angle combo (0-5 pts bonus)
+  if (cutAngle !== null && cueToTarget !== null && cutAngle > 45 && cueToTarget > 0.5) {
+    score += 5;
+  }
+
+  // Scale to 1-10
+  return Math.max(1, Math.min(10, Math.round(score / 10)));
+}
+
+// ── POSITION PLAY ADVISOR ──
+function buildPositionPlayAdvice(cue, targetBall, pkt, cutAngle, allMarks, gameMode) {
+  if (!targetBall) return '';
+
+  // Find next ball (closest to target ball that isn't the current target)
+  const others = allMarks.filter(m =>
+    m !== targetBall && m !== cue &&
+    m.type !== 'pocket' &&
+    (m.type === 'obj' || m.type === 'stripe' || m.type === 'eight')
+  );
+
+  if (others.length === 0) return '';
+
+  const nextBall = closestTo(targetBall, others);
+  const nextDist = dist(targetBall, nextBall);
+
+  // Ideal cue ball landing zone — center of table is always safe
+  // Better: land on the opposite side of target ball from next ball
+  // so you have a natural angle into next shot
+  let posAdvice = '\n\n📍 Position Play: ';
+
+  if (!pkt) {
+    posAdvice += `${others.length} more ball(s) in play. Mark a pocket to get full position advice.`;
+    return posAdvice;
+  }
+
+  // Where is next ball relative to table center?
+  const nextInLeft  = nextBall.fx < 0.4;
+  const nextInRight = nextBall.fx > 0.6;
+  const nextInTop   = nextBall.fy < 0.35;
+  const nextInBot   = nextBall.fy > 0.65;
+
+  // Suggest cue ball landing zone
+  let zone = '';
+  if (nextInLeft)  zone = 'right-center';
+  else if (nextInRight) zone = 'left-center';
+  else if (nextInTop)   zone = 'lower-center';
+  else if (nextInBot)   zone = 'upper-center';
+  else zone = 'center of the table';
+
+  // Spin recommendation for position
+  let spinRec = '';
+  if (cutAngle !== null) {
+    if (cutAngle < 20) spinRec = 'A touch of follow or stun will keep you near center.';
+    else if (cutAngle < 45) spinRec = 'Stun or soft draw will land you near ' + zone + '.';
+    else spinRec = 'Natural angle will send you toward ' + zone + ' — let the cut do the work.';
+  }
+
+  posAdvice += `After this shot, your next ball is ${nextDist < 0.25 ? 'close' : nextDist < 0.5 ? 'mid-table' : 'far'}. `;
+  posAdvice += `Aim to land cue ball in the ${zone}. ${spinRec}`;
+
+  return posAdvice;
+}
+
+// ── RUN-OUT PLANNER ──
+/* ═══════════════════════════════════════════
+   AUTO POCKET ESTIMATOR
+═══════════════════════════════════════════ */
+function autoPlacePockets() {
+  if (!sourceImg) {
+    setStatus('Capture or upload a photo first', 'warn');
+    return;
+  }
+
+  // Standard pool table has 6 pockets:
+  // 4 corners + 2 side pockets (midpoints of long rails)
+  // We estimate table bounds from the ball positions + canvas edges
+  // In overhead view: use full canvas. In player view: compensate for perspective.
+
+  const W = canvas.width, H = canvas.height;
+  const ballMarks = marks.filter(m =>
+    m.type === 'cue' || m.type === 'obj' ||
+    m.type === 'stripe' || m.type === 'eight'
+  );
+
+  // Estimate table boundary from ball positions
+  // If no balls, use canvas bounds with inset
+  let minX = 0.05, maxX = 0.95, minY = 0.05, maxY = 0.95;
+
+  if (ballMarks.length >= 2) {
+    // Expand slightly beyond the outermost balls
+    const pad = 0.08;
+    minX = Math.max(0.02, Math.min(...ballMarks.map(b => b.fx)) - pad);
+    maxX = Math.min(0.98, Math.max(...ballMarks.map(b => b.fx)) + pad);
+    minY = Math.max(0.02, Math.min(...ballMarks.map(b => b.fy)) - pad);
+    maxY = Math.min(0.98, Math.max(...ballMarks.map(b => b.fy)) + pad);
+
+    // Pool tables are ~2:1 ratio — if bounds don't match, expand the shorter axis
+    const bw = maxX - minX, bh = maxY - minY;
+    const tableRatio = (W / H) > 1.4 ? 2.0 : 1.0; // landscape = likely full table visible
+    if (bw / bh < tableRatio * 0.7) {
+      // Height-dominant — expand X
+      const targetW = bh * tableRatio * (W / H);
+      const cx = (minX + maxX) / 2;
+      minX = Math.max(0.02, cx - targetW / 2);
+      maxX = Math.min(0.98, cx + targetW / 2);
+    }
+  }
+
+  const midX = (minX + maxX) / 2;
+  const midY = (minY + maxY) / 2;
+
+  // 6 standard pocket positions
+  const pockets = [
+    { fx: minX, fy: minY, label: 'Top-left corner' },
+    { fx: midX, fy: minY, label: 'Top side' },
+    { fx: maxX, fy: minY, label: 'Top-right corner' },
+    { fx: maxX, fy: maxY, label: 'Bottom-right corner' },
+    { fx: midX, fy: maxY, label: 'Bottom side' },
+    { fx: minX, fy: maxY, label: 'Bottom-left corner' },
+  ];
+
+  // Remove existing auto-placed pockets
+  marks = marks.filter(m => m.type !== 'pocket');
+
+  // Place all 6
+  pockets.forEach(p => {
+    marks.push({ type: 'pocket', fx: p.fx, fy: p.fy, autoPlaced: true });
+  });
+
+  renderCanvas();
+  setStatus('✅ 6 pockets estimated — tap a pocket marker to adjust position', 'gold');
+
+  // Auto-suggest if we have enough to work with
+  const hasCue = marks.some(m => m.type === 'cue');
+  const hasTarget = marks.some(m => ['obj','stripe','eight'].includes(m.type));
+  if (hasCue && hasTarget) {
+    setTimeout(() => suggestShot(), 400);
+  }
+}
+
+/* ═══════════════════════════════════════════
+   ANGLE-AWARE RUN-OUT PLANNER
+═══════════════════════════════════════════ */
+function buildRunOutPlan(cue, allMarks, gameMode) {
+  if (!cue) return '';
+  const balls = allMarks.filter(m =>
+    m.type === 'obj' || m.type === 'stripe' || m.type === 'eight'
+  );
+  if (balls.length < 2) return '';
+
+  const pockets = allMarks.filter(m => m.type === 'pocket');
+
+  // Score a ball as next target from current cue position
+  // Lower score = better choice
+  function scoreBall(cueBall, targetBall, remaining) {
+    let score = 0;
+
+    // 1. Distance to ball (shorter = better, but not the only factor)
+    const d = dist(cueBall, targetBall);
+    score += d * 30;
+
+    // 2. Find best pocket for this ball
+    let bestPocketDist = 0.5;
+    let bestPocket = null;
+    if (pockets.length > 0) {
+      pockets.forEach(p => {
+        const pd = dist(targetBall, p);
+        if (pd < bestPocketDist) { bestPocketDist = pd; bestPocket = p; }
+      });
+      score += bestPocketDist * 20; // balls near pockets score better
+    }
+
+    // 3. Exit angle quality — after potting this ball, where does cue ball end up?
+    // Ideal: cue ball lands near center table (0.5, 0.5) for maximum flexibility
+    if (bestPocket) {
+      // Shot direction: cue → target
+      const shotDx = targetBall.fx - cueBall.fx;
+      const shotDy = targetBall.fy - cueBall.fy;
+      const shotLen = Math.hypot(shotDx, shotDy);
+      const shotNx = shotDx / shotLen, shotNy = shotDy / shotLen;
+
+      // Pocket direction: target → pocket
+      const pktDx = bestPocket.fx - targetBall.fx;
+      const pktDy = bestPocket.fy - targetBall.fy;
+      const pktLen = Math.hypot(pktDx, pktDy);
+      const pktNx = pktDx / pktLen, pktNy = pktDy / pktLen;
+
+      // Cut angle (dot product of shot line and pocket line)
+      const dot = shotNx * pktNx + shotNy * pktNy;
+      const cutAngle = Math.acos(Math.max(-1, Math.min(1, dot))) * 180 / Math.PI;
+
+      // Very steep cuts (>60°) are hard and leave cue ball in bad spots
+      if (cutAngle > 60) score += 15;
+      else if (cutAngle > 45) score += 8;
+      else if (cutAngle < 20) score += 0; // near-straight — easy, good exit
+
+      // Perpendicular deflection path — estimate cue ball landing zone
+      const perpX = -shotNy, perpY = shotNx;
+      // After contact, cue ball deflects roughly 90° - cutAngle/2
+      const deflectAngle = (90 - cutAngle / 2) * Math.PI / 180;
+      const cueExitX = targetBall.fx + Math.cos(deflectAngle) * perpX * 0.3;
+      const cueExitY = targetBall.fy + Math.sin(deflectAngle) * perpY * 0.3;
+
+      // Distance from exit to table center — closer = better position
+      const distToCenter = Math.hypot(cueExitX - 0.5, cueExitY - 0.5);
+      score += distToCenter * 25;
+    }
+
+    // 4. Rail proximity penalty — balls on rail are harder
+    const railDist = Math.min(targetBall.fx, 1-targetBall.fx, targetBall.fy, 1-targetBall.fy);
+    if (railDist < 0.06) score += 12;
+    else if (railDist < 0.12) score += 5;
+
+    // 5. Cluster penalty — balls near other balls are riskier
+    const nearbyBalls = remaining.filter(b =>
+      b !== targetBall && dist(targetBall, b) < 0.1
+    ).length;
+    score += nearbyBalls * 8;
+
+    return score;
+  }
+
+  // Angle-aware greedy sequence
+  let remaining = [...balls];
+  let currentCue = { fx: cue.fx, fy: cue.fy };
+  const sequence = [];
+
+  // In 8-ball mode, separate 8-ball and put it last
+  let eightBall = null;
+  if (gameMode === '8ball') {
+    eightBall = remaining.find(b => b.type === 'eight');
+    remaining = remaining.filter(b => b.type !== 'eight');
+  }
+
+  while (remaining.length > 0) {
+    // Score all remaining balls and pick the best
+    let best = remaining[0];
+    let bestScore = scoreBall(currentCue, remaining[0], remaining);
+
+    remaining.forEach(b => {
+      const s = scoreBall(currentCue, b, remaining);
+      if (s < bestScore) { best = b; bestScore = s; }
+    });
+
+    sequence.push({ ball: best, score: Math.round(bestScore) });
+    currentCue = { fx: best.fx, fy: best.fy };
+    remaining = remaining.filter(b => b !== best);
+  }
+
+  // Add 8-ball last
+  if (eightBall) sequence.push({ ball: eightBall, score: 0 });
+
+  if (sequence.length < 2) return '';
+
+  // Build readable output with difficulty hints
+  const names = { obj: 'Solid', stripe: 'Stripe', eight: '8-ball' };
+  const steps = sequence.map((s, i) => {
+    const name = names[s.ball.type] || 'Ball';
+    const railDist = Math.min(s.ball.fx, 1-s.ball.fx, s.ball.fy, 1-s.ball.fy);
+    const hint = railDist < 0.07 ? ' (on rail)' : '';
+    return `${i+1}. ${name}${hint}`;
+  }).join(' → ');
+
+  // Explain why this order
+  const firstBall = sequence[0].ball;
+  const firstRail = Math.min(firstBall.fx, 1-firstBall.fx, firstBall.fy, 1-firstBall.fy);
+  let reasoning = '';
+  if (firstRail > 0.15) {
+    reasoning = 'Starting with the most central ball keeps the cue ball in open space for the rest of the run.';
+  } else {
+    reasoning = 'Starting with this rail ball clears the difficult shot early while the cue ball is fresh.';
+  }
+
+  return `\n\n🎯 Angle-Smart Run-Out: ${steps}.\n${reasoning}`;
+}
+
 function suggestShot() {
   const cue   = marks.find(m=>m.type==='cue');
   const objs  = marks.filter(m=>m.type==='obj'||m.type==='stripe');
@@ -2614,6 +2977,17 @@ function suggestShot() {
     if (pkt) { cutAngle=computeCutAngle(cue,targetBall,pkt); pocketInfo=getPocketType(pkt); }
   }
 
+  // ── CLUSTER DETECTION ──
+  const clusterNearTarget = targetBall ? marks.filter(m =>
+    m !== targetBall && m.type !== 'cue' && m.type !== 'pocket' &&
+    dist(targetBall, m) < 0.1
+  ).length : 0;
+
+  // ── RAIL PROXIMITY ──
+  const cueNearRail = cue && Math.min(cue.fx, 1-cue.fx, cue.fy, 1-cue.fy) < 0.1;
+  const objNearRail = targetBall && Math.min(targetBall.fx, 1-targetBall.fx, targetBall.fy, 1-targetBall.fy) < 0.08;
+
+  // ── BADGES ──
   if (pocketInfo) addBadge(geo,pocketInfo.label,'pocket-type');
   if (cutAngle!==null) {
     if (viewMode === 'overhead') {
@@ -2622,11 +2996,11 @@ function suggestShot() {
       const approxLabel = cutAngle<15?'Straight':cutAngle<35?'Moderate cut':cutAngle<55?'Hard cut':'Extreme cut';
       addBadge(geo, approxLabel, 'angle');
     }
-    const diff=cutAngle<25?'Easy':cutAngle<50?'Medium':cutAngle<70?'Hard':'Very Hard';
-    const cls=cutAngle<25?'easy':cutAngle<50?'medium':'';
-    addBadge(geo,diff,'diff'+(cls?' '+cls:''));
   }
   if (cueToTarget!==null) addBadge(geo,rangeWord(cueToTarget),'angle');
+  if (clusterNearTarget > 0) addBadge(geo, 'Cluster', 'diff');
+  if (cueNearRail) addBadge(geo, 'Cue on Rail', 'angle');
+  if (objNearRail) addBadge(geo, 'Ball on Rail', 'angle');
 
   let title='',advice='';
 
@@ -2650,22 +3024,34 @@ function suggestShot() {
     else { advice=buildStraightAdvice(cue,targetBall,pkt,cutAngle,pocketInfo,cueToTarget,allTargets); }
   }
 
-  // ── 3. DIFFICULTY RATING 1-10
-  let difficulty = 5;
-  if (cutAngle !== null) difficulty = Math.round(1 + (cutAngle / 90) * 6);
-  if (cueToTarget !== null) {
-    if (cueToTarget > 0.6) difficulty = Math.min(10, difficulty + 2);
-    else if (cueToTarget < 0.2) difficulty = Math.max(1, difficulty - 1);
+  // ── CLUSTER WARNING ──
+  if (clusterNearTarget > 0) {
+    advice += ` ⚠️ There's a cluster of ${clusterNearTarget + 1} balls near your target — contact could be deflected. Consider whether breaking the cluster open is better than trying to pot through it.`;
   }
 
-  var toggle = document.getElementById('english-toggle');
-  if (toggle && toggle.checked && currentEnglish !== 'c') {
-    difficulty = Math.min(10, difficulty + 1);
+  // ── RAIL WARNINGS ──
+  if (cueNearRail) {
+    advice += ' Your cue ball is close to the rail — bridge will be restricted. Shorten your stroke and stay level.';
   }
+  if (objNearRail) {
+    advice += ' Object ball is tight to the rail — aim slightly fuller to account for rail throw and avoid a double-kiss.';
+  }
+
+  // ── POSITION PLAY ──
+  advice += buildPositionPlayAdvice(cue, targetBall, pkt, cutAngle, marks, gameMode);
+
+  // ── RUN-OUT PLAN ──
+  if (allTargets.length >= 2) {
+    advice += buildRunOutPlan(cue, marks, gameMode);
+  }
+
+  // ── SMART DIFFICULTY ──
+  const difficulty = computeSmartDifficulty(cue, targetBall, pkt, cutAngle, cueToTarget, marks);
+
   const diffColor = difficulty <= 3 ? '#34c96a' : difficulty <= 6 ? '#e08820' : '#cc2222';
   const diffLabel = difficulty <= 3 ? 'Easy' : difficulty <= 5 ? 'Moderate' : difficulty <= 7 ? 'Difficult' : 'Very Difficult';
 
-  // ── 4. SAFETY SUGGESTION for hard shots
+  // ── SAFETY NOTE ──
   let safetyNote = '';
   if (difficulty >= 7) {
     safetyNote = ' 🛡️ At difficulty ' + difficulty + '/10, seriously weigh a safety — drive your ball to the rail and leave your opponent without an easy look. Making this shot requires near-perfect execution.';
@@ -2675,7 +3061,6 @@ function suggestShot() {
   const oldBadge = document.getElementById('diff-badge');
   if (oldBadge) oldBadge.remove();
 
-  // Add difficulty badge
   const badge = document.createElement('div');
   badge.id = 'diff-badge';
   badge.style.cssText = 'display:inline-flex;align-items:center;gap:6px;background:rgba(0,0,0,.3);border:1px solid ' + diffColor + ';border-radius:6px;padding:4px 10px;margin-bottom:8px;font-family:Barlow Condensed,sans-serif;font-size:12px;font-weight:700;color:' + diffColor + ';letter-spacing:1px';
@@ -2684,7 +3069,11 @@ function suggestShot() {
 
   titl.textContent = title;
   var englishAdvice = getEnglishAdvice(cutAngle);
-  body.textContent = advice + englishAdvice + safetyNote;
+  // Use innerHTML so \n\n line breaks in position/runout advice render correctly
+  var fullAdvice = (advice + englishAdvice + safetyNote)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/\n\n/g,'<br><br>').replace(/\n/g,'<br>');
+  body.innerHTML = fullAdvice;
   sug.classList.add('show');
 
   // Coaching mode
@@ -2702,7 +3091,11 @@ function suggestShot() {
   if (sourceImg) renderCanvas();
   setStatus('Difficulty ' + difficulty + '/10 · ' + diffLabel, 'gold');
 
-  // Save to shot history
+  setTimeout(function() {
+    var sugEl = document.getElementById('suggestion');
+    if (sugEl) sugEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, 200);
+
   saveToHistory(title, difficulty, cutAngle, gameMode);
   saveSettings();
 }
@@ -2770,7 +3163,7 @@ function buildObjectAdvice(cue,target,pkt,cutAngle,pocketInfo,d,totalObjs) {
 }
 
 function build9BallAdvice(cue,target,pkt,cutAngle,pocketInfo,d) {
-  let a='Contact the lowest ball first — that\'s the rule, no exceptions. ';
+  let a='';
   if (pkt) {
     a+=buildGeometryLine(cutAngle,pocketInfo);
     a+=buildRangeLine(d);
@@ -2778,7 +3171,7 @@ function build9BallAdvice(cue,target,pkt,cutAngle,pocketInfo,d) {
     a+=' In 9-ball, position for the next ball is everything — the shot you make matters less than where the cue ball stops.';
   } else {
     a+=buildRangeLine(d);
-    a+='Mark a target pocket to see the angle. And remember — in 9-ball a good safety on a tough shot is a strong play, not a surrender.';
+    a+='Mark a target pocket for the full aim line. In 9-ball a well-played safety on a tough shot is a strong play, not a surrender.';
   }
   return a;
 }
@@ -3245,25 +3638,38 @@ try { shotHistory = JSON.parse(localStorage.getItem('rr_history') || '[]'); } ca
 function saveToHistory(title, difficulty, cutAngle, gameModeName) {
   if (!sourceImg || !canvas) return;
   try {
-    // Thumbnail from canvas
-    var thumb = document.createElement('canvas');
-    thumb.width = 104; thumb.height = 76;
-    thumb.getContext('2d').drawImage(canvas, 0, 0, 104, 76);
-    var dataUrl = thumb.toDataURL('image/jpeg', 0.6);
+    // Single image — capped at 800px wide, good quality
+    // Sharp enough to restore, small enough to stay under localStorage limits
+    const MAX_W = 800;
+    const srcW = sourceImg.naturalWidth || sourceImg.width || canvas.width;
+    const srcH = sourceImg.naturalHeight || sourceImg.height || canvas.height;
+    const scale = Math.min(1, MAX_W / srcW);
+    var img = document.createElement('canvas');
+    img.width  = Math.round(srcW * scale);
+    img.height = Math.round(srcH * scale);
+    img.getContext('2d').drawImage(sourceImg, 0, 0, img.width, img.height);
+    var imgUrl = img.toDataURL('image/jpeg', 0.78);
+
     var entry = {
       id: Date.now(),
       title: title,
       difficulty: difficulty,
       cutAngle: cutAngle,
       game: gameModeName,
-      thumb: dataUrl,
+      img: imgUrl,
       time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})
     };
     shotHistory.unshift(entry);
     if (shotHistory.length > 5) shotHistory.pop();
-    localStorage.setItem('rr_history', JSON.stringify(shotHistory));
+    try {
+      localStorage.setItem('rr_history', JSON.stringify(shotHistory));
+    } catch(storageErr) {
+      // Storage full — drop oldest entry and try again
+      shotHistory.pop();
+      try { localStorage.setItem('rr_history', JSON.stringify(shotHistory)); } catch(e) {}
+    }
     renderHistory();
-  } catch(e) {}
+  } catch(e) { console.error('saveToHistory error:', e); }
 }
 
 var _historyRestoreEntry = null;
@@ -3272,7 +3678,7 @@ function openHistoryRestore(entryId) {
   var entry = shotHistory.find(function(e) { return e.id === entryId; });
   if (!entry) return;
   _historyRestoreEntry = entry;
-  document.getElementById('history-restore-thumb').src = entry.thumb;
+  document.getElementById('history-restore-thumb').src = entry.img || entry.thumb || entry.fullImg;
   document.getElementById('history-restore-title').textContent = entry.title;
   var diffColor = entry.difficulty <= 3 ? '#3ddd7a' : entry.difficulty <= 6 ? '#e08820' : '#cc2222';
   document.getElementById('history-restore-meta').innerHTML =
@@ -3319,7 +3725,8 @@ function confirmHistoryRestore() {
     }, 120);
     setStatus('📸 Shot restored from history — re-mark balls and suggest again', 'gold');
   };
-  img.src = entry.thumb;
+  // Use full resolution image if available, fall back to thumb for old entries
+  img.src = entry.img || entry.fullImg || entry.thumb;
 }
 
 function renderHistory() {
@@ -3330,7 +3737,7 @@ function renderHistory() {
   list.innerHTML = shotHistory.map(function(e) {
     var diffColor = e.difficulty <= 3 ? '#3ddd7a' : e.difficulty <= 6 ? '#e08820' : '#cc2222';
     return '<div class="history-item" onclick="openHistoryRestore(' + e.id + ')" style="cursor:pointer">' +
-      '<img class="history-thumb" src="' + e.thumb + '" alt="shot"/>' +
+      '<img class="history-thumb" src="' + (e.img || e.thumb) + '" alt="shot"/>' +
       '<div class="history-info">' +
         '<div class="history-title">' + e.title + '</div>' +
         '<div class="history-meta">' + e.game + ' · ' + (e.cutAngle !== null ? e.cutAngle + '° cut · ' : '') + e.time + '</div>' +
