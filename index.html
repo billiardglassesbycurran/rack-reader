@@ -1428,7 +1428,7 @@ async function loadModel() {
         // Rewrite relative .bin URLs to jsDelivr absolute URLs
         if (!url.startsWith('http')) {
           url = BASE + url;
-        } else if (url.includes('.bin') && !url.includes('jsdelivr')) {
+        } else if (url.includes('.bin') && !url.includes('github.io')) {
           const filename = url.split('/').pop();
           url = BASE + filename;
         }
