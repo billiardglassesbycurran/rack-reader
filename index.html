@@ -1422,7 +1422,7 @@ async function loadModel() {
     setModelStatus('TensorFlow ready — fetching model...', 'loading');
 
     // Load with custom fetch to rewrite .bin file URLs to jsDelivr
-    const BASE = 'https://cdn.jsdelivr.net/gh/billiardglassesbycurran/rack-reader@main/';
+    const BASE = 'https://billiardglassesbycurran.github.io/rack-reader-v3/';
     tfModel = await tf.loadGraphModel(MODEL_URL, {
       fetchFunc: async (url, init) => {
         // Rewrite relative .bin URLs to jsDelivr absolute URLs
